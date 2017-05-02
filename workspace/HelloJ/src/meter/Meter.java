@@ -3,23 +3,43 @@ package meter;
 import processing.core.*;
 
 /**
- * Display microprocessor or other sensor readings in an analog meter.
+ * Display Arduino or other sensor readings in an analog meter. 
+ * Defaults to an analog voltage meter of 0 - 5 volt range. 
+ * Defaults to a half circle meter. 
+ * The upper left corner of the meter is specified. The
+ * height is calculated as needed. 
+ * An optional parameter specifies a full circle meter. 
+ * Most of the meter parts can be changed by setting variables,
+ * use the GET methods to display default/current value of variables.
+ * Note: when changing the width value, do so immediately after 
+ * instantiating a meter object. If changing the width in 
+ * the Draw() loop, the old meter is not removed.
  * 
+ * May be used without microprocessor hardware to display software values.
  * 
  * @author Bill (Papa) Kujawa
  *
  **/
-
 public class Meter {
 	PApplet p; // The parent PApplet.
 
-	// The upper left hand corner of the meter rectangle.
+	/**
+	 * The upper left hand corner of the meter rectangle.
+	 */
 	private int meterX;
+	/**
+	 * The upper left hand corner of the meter rectangle.
+	 */
 	private int meterY;
-	// The meter width.
-	// The height is defined proportionally to the width + bottom text area.
+	/**
+	 * The meter width
+	 */
 	private int meterWidth;
+	/**
+	 * The height is defined proportionally to the width + bottom text area
+	 */
 	private int meterHeight;
+	// The default is a half circle.
 	private boolean fullCircle;
 	// Meter needle pivot point
 	private int pivotPointX;
@@ -31,6 +51,8 @@ public class Meter {
 	// The meter frame.
 	private int meterFrameThickness;
 	private int meterFrameColor;
+
+	// Information area at bottom of meter for displaying sensor values
 	private int informationAreaFontSize;
 	private String informationAreaText;
 	private int informationAreaTextYOffset;
@@ -46,6 +68,7 @@ public class Meter {
 	private PFont meterTitleFont;
 	private int meterTitleFontColor;
 	private String meterTitle;
+	// Adjust title distance from meter Y origin
 	private int meterTitleYOffset;
 
 	// Define the meter needle pivot point.
@@ -58,6 +81,10 @@ public class Meter {
 	private double arcMinDegrees;
 	private double arcMaxDegrees;
 	private int shortTicsBetweenLongTics;
+
+	// An arc drawn inside scale values
+	// Distance set from Pivot Point
+	private boolean displayArc;
 	private int arcPositionOffset;
 	private int arcColor;
 	private int arcThickness;
@@ -68,12 +95,14 @@ public class Meter {
 	private int meterScaleFontColor;
 	private int meterScaleFontSize;
 	private int meterScaleOffsetFromPivotPoint;
+	// Set to false to prevent last label overwriting first label
 	private boolean displayLastScaleLabel;
 	private String[] scaleLabels;
+	// For displaying non-numeric scale labels
 	private boolean displayAlternateScaleLabels;
 	private String[] alternateScaleLabels;
 
-	// The tic marks for measuring the values.
+	// The tic marks for indicating the values.
 	private int longTicMarkLength;
 	private int shortTicMarkLength;
 	private int ticMarkSetbackFromArc;
@@ -86,7 +115,7 @@ public class Meter {
 	private float newSensorValue;
 	private float newMeterPosition;
 
-	// Set warning values
+	// Set optional warning values
 	private boolean lowSensorWarningActive;
 	private boolean highSensorWarningActive;
 	private float lowSensorWarningValue;
@@ -106,12 +135,18 @@ public class Meter {
 	// Needle definitions.
 	private int needleLength;
 	private int needleColor;
+	// Thickness
 	private int needleSize;
 
+	// Width until changed
 	private static int DEFAULTWIDTH = 440;
+	// Sets half circle height
 	private static float HEIGHTTOWIDTHRATIOHALFCIRCLE = 0.58f;
+	// Sets full circle height
 	private static float HEIGHTTOWIDTHRATIOFULLCIRCLE = 1.0f;
+	// Sets position of pivot point from meter Y
 	private static float PIVOTPOINTRATIO = 0.50f;
+	// Used to resize everything
 	private float scaleFactor = 1.0f;
 
 	PGraphics mFrame;
@@ -122,16 +157,28 @@ public class Meter {
 	PGraphics mTics;
 	PGraphics mNeedle;
 
-	// Constructors
+	/**
+	 * Constructors
+	 * Default settings for a simple voltage meter,
+	 * sensor values of 0 - 255 correspond to 0.0 - 5.0 volts
+	 * 
+	 * @param parent
+	 * @param x
+	 * @param y
+	 */
 	public Meter(PApplet parent, int x, int y) {
 		// Default is HALFCIRCLE.
 		this(parent, x, y, false);
 	}
 
+	/**
+	 * Declare a full circle meter
+	 * @param parent
+	 * @param x
+	 * @param y
+	 * @param fullCircle
+	 */
 	public Meter(PApplet parent, int x, int y, boolean fullCircle) {
-		// Default settings for a simple voltage meter.
-		// Sensor values of 0 - 255 correspond to 0.0 - 5.0 volts.
-		// Note: changing the order of defaults can cause problems.
 		p = parent;
 		meterX = x;
 		meterY = y;
@@ -139,9 +186,10 @@ public class Meter {
 		setMeterFrameThickness(4);
 		setMeterWidth(DEFAULTWIDTH);
 	}
-
+	
+	// Note: changing the order can cause interesting and unwanted results.
 	private void initializeDefaultValues() {
-		// Need to reset the defaults when the meterWidth is changed
+		// Reset the default values when the meterWidth is changed
 		// to be able to recalculate using the new scaleFactor.
 		setMeterFrameColor(p.color(0, 0, 0));
 		setInformationAreaFontSize(20);
@@ -165,6 +213,7 @@ public class Meter {
 		setMinInputSignal(0);
 		setMaxInputSignal(255);
 
+		setDisplayArc(true);
 		setArcPositionOffset(150);
 		setArcColor(p.color(0, 0, 0));
 		setArcThickness(6);
@@ -225,7 +274,7 @@ public class Meter {
 		updateMeterReading(newSensorReading);
 		drawMeterNeedle();
 
-		// Display previously constructed images 
+		// Display previously constructed images
 		// if only the sensor value changes.
 		// i.e. just redraw the things that changed.
 		if (meterChanged == true) {
@@ -240,7 +289,9 @@ public class Meter {
 		p.image(mFrame, 0, 0);
 		p.image(mTitle, 0, 0);
 		p.image(mPivot, 0, 0);
-		p.image(mArc, 0, 0);
+		if (displayArc == true) {
+			p.image(mArc, 0, 0);
+		}
 		p.image(mLabels, 0, 0);
 		p.image(mTics, 0, 0);
 		p.image(mNeedle, 0, 0);
@@ -309,14 +360,14 @@ public class Meter {
 		informationAreaText = infoText;
 		meterChanged = true;
 	}
-	
+
 	public void setDisplayOnlySensorValue(boolean valueOnly) {
 		displayOnlySensorValue = valueOnly;
 	}
-	
+
 	public boolean getDisplayOnlySensorValue() {
 		return displayOnlySensorValue;
-		
+
 	}
 
 	public String getInformationAreaText() {
@@ -470,11 +521,11 @@ public class Meter {
 		// bottom.
 		meterWidth = mWidth;
 		if (fullCircle == true) {
-			meterHeight = (int)(mWidth * HEIGHTTOWIDTHRATIOFULLCIRCLE) + meterFrameThickness * 2;
+			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOFULLCIRCLE) + meterFrameThickness * 2;
 		} else {
 			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOHALFCIRCLE) + meterFrameThickness * 2;
 		}
-		
+
 		if (mWidth != DEFAULTWIDTH) {
 			scaleFactor = (float) mWidth / (float) DEFAULTWIDTH;
 		} else {
@@ -693,6 +744,15 @@ public class Meter {
 
 	public int getArcColor() {
 		return arcColor;
+	}
+	
+	public void setDisplayArc(boolean displayArc) {
+		this.displayArc = displayArc;
+		meterChanged = true;
+	}
+	
+	public boolean getDisplayArc() {
+		return displayArc;
 	}
 
 	public void setArcThickness(int thick) {
@@ -1054,8 +1114,7 @@ public class Meter {
 			mNeedle.textSize(informationAreaFontSize);
 			if (displayOnlySensorValue == false) {
 				informationText = String.format(informationAreaText, newSensorReading, newSensorValue);
-			}
-			else {
+			} else {
 				informationText = String.format(informationAreaText, newSensorValue);
 			}
 			mNeedle.text(informationText, meterX + (meterWidth / 2), meterY + meterHeight - informationAreaTextYOffset);

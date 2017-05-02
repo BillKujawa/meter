@@ -1,12 +1,13 @@
 import processing.core.PApplet;
 import meter.Meter;
+/*
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsEnvironment;
-
+*/
 public class UsingP extends PApplet {
 	Meter m, m2;
 
@@ -38,7 +39,7 @@ public class UsingP extends PApplet {
 	//	m2 = new Meter(this, 30, my + mh);
 	//	m2.setMeterTitle("Test");
 	//	m = new Meter(this, 325, 25, true);
-		
+	//	m.setDisplayArc(false);
 
 		m.setMinArcDegrees(90.0); // PI (left side)
 		m.setMaxArcDegrees(360.0); // TWO_PI (right side)
