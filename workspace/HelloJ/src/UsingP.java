@@ -1,13 +1,7 @@
 import processing.core.PApplet;
 import meter.Meter;
-/*
-import java.awt.GraphicsEnvironment;
-import java.awt.GraphicsEnvironment;
-import java.awt.GraphicsEnvironment;
-import java.awt.GraphicsEnvironment;
-import java.awt.GraphicsEnvironment;
-import java.awt.GraphicsEnvironment;
-*/
+
+
 public class UsingP extends PApplet {
 	Meter m, m2;
 
@@ -24,8 +18,8 @@ public class UsingP extends PApplet {
 
 	public void setup() {
 		fill(120, 50, 0);
-//		m = new Meter(this, 120, 25);
-		m = new Meter(this, 20, 25, true);
+		m = new Meter(this, 20, 25);
+//		m = new Meter(this, 20, 25, true);
 //		m.setMeterWidth(340);
 	//	m.setMeterFrameThickness(8);
 		int mx = m.getMeterX();
@@ -41,16 +35,16 @@ public class UsingP extends PApplet {
 	//	m = new Meter(this, 325, 25, true);
 	//	m.setDisplayArc(false);
 
-		m.setMinArcDegrees(90.0); // PI (left side)
-		m.setMaxArcDegrees(360.0); // TWO_PI (right side)
+	//	m.setMinArcDegrees(90.0); // PI (left side)
+	//	m.setMaxArcDegrees(360.0); // TWO_PI (right side)
 //		m.setDisplayLastScaleLabel(false);
-//		m.setDisplayDigitalSensorValues(true);
+		m.setDisplayDigitalSensorValues(true);
 	//	m.setMeterWidth((int)random(50, 700));
 	//	m2 = new Meter(this, 625, 70);
 	//  m.setMeterTitleColor(color(0,255,0));
 	//	String[] scaleLabels = {"0.0", "1.0", "2.0", "3.0", "4.0", "5.0", "6.0", "7.0", "8.0"};
-		String[] scaleLabels = {"-10", "0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110"};
-		m.setScaleLabels(scaleLabels);
+	//	String[] scaleLabels = {"-10", "0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110"};
+	//	m.setScaleLabels(scaleLabels);
 	//	m.setDisplayAlternateScaleLabels(true);;
 	//	String[] alternateScaleLabels = {"E", "SE", "S", "SW", "W", "NW", "N", "NE", "E"};
 	//	m.setAlternateScaleLabels(alternateScaleLabels);
@@ -78,14 +72,18 @@ public class UsingP extends PApplet {
 	public void draw() {
 	//	m.setMeterWidth((int)random(50, 700));
 	//	m.setDisplayDigitalSensorValues(true);
-		int newSensorReading = 20;
-		newSensorReading = (int)random(0, 255);
+		int newSensorReading = 120;
+	//	newSensorReading = (int)random(0, 255);
+	//	m.setDisplayArc(false);
 	//	stroke(m.getMeterFrameColor());
 	//	ellipse(width - 20, height - 20, 25, 25);
 		m.setLowSensorWarningActive(true);
-		m.setLowSensorWarningValue((float)60.0);
+	//	m.setLowSensorWarningValue((float)60.0);
+		m.setLowSensorWarningValue((float)1.0);
 		m.setHighSensorWarningActive(true);
-		m.setHighSensorWarningValue((float)80.0);
+	//	m.setHighSensorWarningValue((float)80.0);
+		m.setHighSensorWarningActive(true);
+		m.setHighSensorWarningValue((float)4.0);
 		m.updateMeter(newSensorReading);
 	//	m2.updateMeter(newSensorReading);
 		delay(1000);

@@ -5,6 +5,7 @@ import processing.core.*;
 /**
  * Display Arduino or other sensor readings in an analog meter. 
  * Defaults to an analog voltage meter of 0 - 5 volt range. 
+ * A sensor reading is mapped to a meter value.
  * Defaults to a half circle meter. 
  * The upper left corner of the meter is specified. The
  * height is calculated as needed. 
@@ -14,6 +15,8 @@ import processing.core.*;
  * Note: when changing the width value, do so immediately after 
  * instantiating a meter object. If changing the width in 
  * the Draw() loop, the old meter is not removed.
+ * 
+ * Some methods will generate non-fatal warning messages.
  * 
  * May be used without microprocessor hardware to display software values.
  * 
@@ -55,6 +58,7 @@ public class Meter {
 	// Information area at bottom of meter for displaying sensor values
 	private int informationAreaFontSize;
 	private String informationAreaText;
+	// Adjust the text spacing from bottom of meter.
 	private int informationAreaTextYOffset;
 	private String informationAreaFontName;
 	private PFont informationAreaFont;
@@ -110,7 +114,7 @@ public class Meter {
 	private int ticMarkThickness;
 	private int ticMarkColor;
 
-	// Map the sensor value to meter reading and needle position.
+	// Map the sensor reading to meter value and needle position.
 	private int newSensorReading;
 	private float newSensorValue;
 	private float newMeterPosition;
@@ -187,13 +191,13 @@ public class Meter {
 		setMeterWidth(DEFAULTWIDTH);
 	}
 	
+	// Reset the default values when the meterWidth is changed
+	// to be able to recalculate using the new scaleFactor.
 	// Note: changing the order can cause interesting and unwanted results.
 	private void initializeDefaultValues() {
-		// Reset the default values when the meterWidth is changed
-		// to be able to recalculate using the new scaleFactor.
 		setMeterFrameColor(p.color(0, 0, 0));
-		setInformationAreaFontSize(20);
 
+		setInformationAreaFontSize(20);
 		setInformationAreaTextYOffset(10);
 		setInformationAreaText("Sensor: % 4d -> Value: %.2f");
 		setInformationAreaFontName("DejaVu Sans Mono bold");
@@ -232,7 +236,7 @@ public class Meter {
 
 		setLongTicMarkLength(25);
 		setShortTicMarkLength(14);
-		setshortTicsBetweenLongTics(4);
+		setShortTicsBetweenLongTics(4);
 		setTicMarkSetbackFromArc(30);
 		setTicMarkOffsetFromPivotPoint(146);
 		setTicMarkThickness(2);
@@ -240,6 +244,7 @@ public class Meter {
 
 		setNeedleLength(145);
 		setNeedleColor(p.color(255, 0, 0));
+		// Set the needle width
 		setNeedleSize(1);
 
 		setLowSensorWarningActive(false);
@@ -259,6 +264,9 @@ public class Meter {
 		setHighSensorWarningColor(p.color(255, 70, 0));
 	}
 
+	// Process new sensor reading to the meter value
+	// Redraw only what is necessary, typically the meter needle
+	// and associated changed text or warning messages.
 	public void updateMeter(int newSensorReading) {
 		if (newSensorReading < minInputSignal) {
 			String errorMessage = "New sensor reading (" + newSensorReading + ") < Min sensor reading ("
@@ -275,8 +283,8 @@ public class Meter {
 		drawMeterNeedle();
 
 		// Display previously constructed images
-		// if only the sensor value changes.
-		// i.e. just redraw the things that changed.
+		// if only the sensor value changes (where the meter points)
+		// just redraw the things that changed
 		if (meterChanged == true) {
 			drawMeterFrame();
 			drawMeterTitle();
@@ -286,9 +294,12 @@ public class Meter {
 			drawMeterTicMarks();
 			meterChanged = false;
 		}
+		
 		p.image(mFrame, 0, 0);
 		p.image(mTitle, 0, 0);
 		p.image(mPivot, 0, 0);
+		// drawMeterArc does additional calculations
+		// so we just won't display the actual arc.
 		if (displayArc == true) {
 			p.image(mArc, 0, 0);
 		}
@@ -297,6 +308,11 @@ public class Meter {
 		p.image(mNeedle, 0, 0);
 	}
 
+	/**
+	 * Enable display of values at bottom of meter.
+	 * 
+	 * @param displayDigitalValues
+	 */
 	public void setDisplayDigitalSensorValues(boolean displayDigitalValues) {
 		displayDigitalSensorValues = displayDigitalValues;
 		meterChanged = true;
@@ -319,6 +335,12 @@ public class Meter {
 		return Math.round((float) num * scaleFactor);
 	}
 
+	/**
+	 * Allows the vertical adjustment of information text
+	 * from the bottom of the meter.
+	 * 
+	 * @param offset
+	 */
 	public void setInformationAreaTextYOffset(int offset) {
 		informationAreaTextYOffset = offset;
 		meterChanged = true;
@@ -328,6 +350,11 @@ public class Meter {
 		return informationAreaTextYOffset;
 	}
 
+	/**
+	 * Adjust the information area font size
+	 * 
+	 * @param fontSize
+	 */
 	public void setInformationAreaFontSize(int fontSize) {
 		informationAreaFontSize = scale(fontSize);
 		meterChanged = true;
@@ -337,6 +364,11 @@ public class Meter {
 		return informationAreaFontSize;
 	}
 
+	/**
+	 * Set the information area font
+	 * 
+	 * @param fontName
+	 */
 	public void setInformationAreaFontName(String fontName) {
 		informationAreaFontName = fontName;
 		informationAreaFont = p.createFont(informationAreaFontName, informationAreaFontSize);
@@ -347,6 +379,11 @@ public class Meter {
 		return informationAreaFontName;
 	}
 
+	/**
+	 * Change the information area font color
+	 * 
+	 * @param fontColor
+	 */
 	public void setInformationAreaFontColor(int fontColor) {
 		informationAreaFontColor = fontColor;
 		meterChanged = true;
@@ -356,24 +393,41 @@ public class Meter {
 		return informationAreaFontColor;
 	}
 
+	/**
+	 * Change the information area text
+	 * Default is sensor reading and sensor value
+	 * such as (reading = 120; value = 2.35)
+	 * 
+	 * @param infoText
+	 */
 	public void setInformationAreaText(String infoText) {
 		informationAreaText = infoText;
 		meterChanged = true;
 	}
+	
+	public String getInformationAreaText() {
+		return informationAreaText;
+	}
 
+	/**
+	 * Display sensor value, not sensor reading
+	 * Should adjust the information area text to correspond
+	 * 
+	 * @param valueOnly
+	 */
 	public void setDisplayOnlySensorValue(boolean valueOnly) {
 		displayOnlySensorValue = valueOnly;
 	}
 
 	public boolean getDisplayOnlySensorValue() {
 		return displayOnlySensorValue;
-
 	}
 
-	public String getInformationAreaText() {
-		return informationAreaText;
-	}
-
+	/**
+	 * Activate low sensor warning
+	 * 
+	 * @param sensorActive
+	 */
 	public void setLowSensorWarningActive(boolean sensorActive) {
 		lowSensorWarningActive = sensorActive;
 		meterChanged = true;
@@ -383,6 +437,11 @@ public class Meter {
 		return lowSensorWarningActive;
 	}
 
+	/**
+	 * Activate high sensor warning
+	 * 
+	 * @param sensorActive
+	 */
 	public void setHighSensorWarningActive(boolean sensorActive) {
 		highSensorWarningActive = sensorActive;
 		meterChanged = true;
@@ -429,6 +488,12 @@ public class Meter {
 		return lowSensorWarningColor;
 	}
 
+	/**
+	 * When low or high sensor warnings are enabled
+	 * this sets the color of the arc between those settings.
+	 * 
+	 * @param midWarningColor
+	 */
 	public void setMidSensorWarningColor(int midWarningColor) {
 		midSensorWarningColor = midWarningColor;
 		meterChanged = true;
@@ -447,8 +512,12 @@ public class Meter {
 		return highSensorWarningColor;
 	}
 
+	/**
+	 * Adjust the sensor warning text below the meter Y value
+	 * 
+	 * @param textYOffset
+	 */
 	public void setSensorWarningTextYOffset(int textYOffset) {
-		// An area below the needle pivot point.
 		sensorWarningTextYOffset = scale(textYOffset);
 		meterChanged = true;
 	}
@@ -512,13 +581,16 @@ public class Meter {
 		return sensorWarningHighText;
 	}
 
+	/*
+	 Determine the meter height as a percentage of the width plus frame
+	 thickness. This includes an area at the bottom for optional text.
+	 Call initializeDefaultValues to reset them and apply the scale
+	 factor.
+	 Place the pivot point in the horizontal center and just above the
+	 bottom.
+	 */
 	public void setMeterWidth(int mWidth) {
-		// Determine the meter height a percentage of the width plus frame
-		// thickness. This includes an area at the bottom for optional text.
-		// Call initializeDefaultValues to reset them and apply the scale
-		// factor.
-		// Place the pivot point in the horizontal center and just above the
-		// bottom.
+
 		meterWidth = mWidth;
 		if (fullCircle == true) {
 			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOFULLCIRCLE) + meterFrameThickness * 2;
@@ -555,8 +627,8 @@ public class Meter {
 		return meterHeight;
 	}
 
+	// Note: This must be set before calling setMeterWidth
 	private void setFullCircle(boolean fullCircle) {
-		// This must be set before calling setMeterWidth.
 		this.fullCircle = fullCircle;
 	}
 
@@ -582,16 +654,19 @@ public class Meter {
 		return meterFrameColor;
 	}
 
+	/*
+	 The frame width includes the frame thickness.
+	 The center of the frame would extend on either side of
+	 the meterX location. Move the frame half a thickness to
+	 the right and a full frame thickness to the left to
+	 account for both sides.
+	 The meter height is determined by adding the frame
+	 thicknesses to top and bottom. The space for the 
+	 information area is allowed at the bottom when the
+	 meter height is calculated.
+	 */
 	private void drawMeterFrame() {
-		// The frame width includes the frame thickness.
-		// The center of the frame would extend on either side of
-		// the meterX location. Move the frame half a thickness to
-		// the right and a full frame thickness to the left to
-		// account for both sides.
-		// The meter height is determined by adding the frame
-		// thicknesses to top and bottom. The information area, if
-		// defined, is added to the height at the bottom when the
-		// meter width is calculated.
+
 		mFrame = p.createGraphics(p.width, p.height);
 		mFrame.beginDraw();
 		mFrame.stroke(meterFrameColor);
@@ -637,6 +712,12 @@ public class Meter {
 		meterChanged = true;
 	}
 
+	/**
+	 * Adjusts the position of the title from the
+	 * meter Y value.
+	 * 
+	 * @param YOffset
+	 */
 	public void setMeterTitleYOffset(int YOffset) {
 		meterTitleYOffset = scale(YOffset);
 		meterChanged = true;
@@ -646,18 +727,24 @@ public class Meter {
 		return meterTitleYOffset;
 	}
 
+	// Position the title just below the top of the meter frame
 	private void drawMeterTitle() {
-		// position the title just below the top of the meter frame
 		mTitle = p.createGraphics(p.width, p.height);
 		mTitle.beginDraw();
 		mTitle.textFont(meterTitleFont);
 		mTitle.textAlign(PConstants.CENTER);
 		mTitle.fill(meterTitleFontColor);
 		mTitle.textSize(meterTitleFontSize);
-		mTitle.text(meterTitle, pivotPointX, meterY + p.textAscent() + meterFrameThickness + meterTitleYOffset);
+		mTitle.text(meterTitle, pivotPointX, meterY + p.textAscent() + 
+				meterFrameThickness + meterTitleYOffset);
 		mTitle.endDraw();
 	}
 
+	/**
+	 * Set the diameter of the meter pivot point
+	 * 
+	 * @param pSize
+	 */
 	public void setMeterPivotPointSize(int pSize) {
 		meterPivotPointSize = scale(pSize);
 		meterChanged = true;
@@ -692,6 +779,12 @@ public class Meter {
 		mPivot.endDraw();
 	}
 
+	/**
+	 * Set the width and length of the arc circle
+	 * from the needle pivot point
+	 * 
+	 * @param offset
+	 */
 	public void setArcPositionOffset(int offset) {
 		// The width and length of the circle
 		arcPositionOffset = scale(offset);
@@ -702,6 +795,13 @@ public class Meter {
 		return arcPositionOffset;
 	}
 
+	/**
+	 * Set the minimum sensor reading expected
+	 * A warning message is issued if this value is greater
+	 * than the maxInputSignal expected
+	 * 
+	 * @param minIn
+	 */
 	public void setMinInputSignal(int minIn) {
 		if (minIn > maxInputSignal) {
 			String errorMessage = "Min input signal (" + minIn + " > Max input signal (" + maxInputSignal + ")";
@@ -715,9 +815,17 @@ public class Meter {
 		return minInputSignal;
 	}
 
+	/**
+	 * Set the maximum sensor reading expected
+	 * A warning message is issued if this value is less
+	 * than the minInputSignal expected
+	 * 
+	 * @param maxIn
+	 */
 	public void setMaxInputSignal(int maxIn) {
 		if (maxIn < minInputSignal) {
-			String errorMessage = "Max input signal (" + maxIn + ") < Min input signal (" + minInputSignal + ")";
+			String errorMessage = "Max input signal (" + maxIn + 
+					") < Min input signal (" + minInputSignal + ")";
 			displayErrorMessage(errorMessage);
 		}
 		maxInputSignal = maxIn;
@@ -728,15 +836,8 @@ public class Meter {
 		return maxInputSignal;
 	}
 
-	public void setShortTicsBetweenLongTics(int numShortTics) {
-		shortTicsBetweenLongTics = numShortTics;
-		meterChanged = true;
-	}
-
-	public int getShortTicsBetweenLongTics() {
-		return shortTicsBetweenLongTics;
-	}
-
+	// The arc color when no low or high warnings are enabled
+	// Note: should be the middle arc color.
 	public void setArcColor(int aColor) {
 		arcColor = aColor;
 		meterChanged = true;
@@ -746,6 +847,11 @@ public class Meter {
 		return arcColor;
 	}
 	
+	/**
+	 * Allows the removal of the arc from the meter
+	 * 
+	 * @param displayArc
+	 */
 	public void setDisplayArc(boolean displayArc) {
 		this.displayArc = displayArc;
 		meterChanged = true;
@@ -764,6 +870,14 @@ public class Meter {
 		return arcThickness;
 	}
 
+	/**
+	 * Determines where the meter arc starts.
+	 * 0.0 degrees is at 3:00 o'clock and moves clockwise
+	 * The default arc is 180.0 degrees at 9:00 o'clock
+	 * to 360.0 degrees at 3:00 o'clock.
+	 * 
+	 * @param minDegrees
+	 */
 	public void setMinArcDegrees(double minDegrees) {
 		if ((minDegrees > arcMaxDegrees) && (arcMaxDegrees > 0)) {
 			String errorMessage = "Arc Min Degrees (" + minDegrees + ") > Arc Max Degrees (" + arcMaxDegrees + ")";
@@ -777,6 +891,12 @@ public class Meter {
 		return arcMinDegrees;
 	}
 
+	/**
+	 * Determines where the meter arc ends.
+	 * 360.0 degrees is at 3:00 o'clock.
+	 * 
+	 * @param maxDegrees
+	 */
 	public void setMaxArcDegrees(double maxDegrees) {
 		if (maxDegrees < arcMinDegrees) {
 			String errorMessage = "Arc Max Degrees (" + maxDegrees + ") < Arc Min Degrees (" + arcMinDegrees + ")";
@@ -790,6 +910,7 @@ public class Meter {
 		return arcMaxDegrees;
 	}
 
+	// Draw the arc with appropriate colors
 	private void drawMeterArc() {
 		mArc = p.createGraphics(p.width, p.height);
 		mArc.beginDraw();
@@ -859,6 +980,14 @@ public class Meter {
 		return meterScaleFontColor;
 	}
 
+	/**
+	 * Each label will coinside with a long tic mark
+	 * These are numeric labels. The first and last of
+	 * the array are used to calculate the tic spacing
+	 * even when alternate labels are used.
+	 * 
+	 * @param labels
+	 */
 	public void setScaleLabels(String[] labels) {
 		scaleLabels = labels;
 		meterChanged = true;
@@ -868,6 +997,11 @@ public class Meter {
 		return scaleLabels;
 	}
 
+	/**
+	 * Display these instead of numeric labels.
+	 *
+	 * @param displayAlternateLabels
+	 */
 	public void setDisplayAlternateScaleLabels(boolean displayAlternateLabels) {
 		displayAlternateScaleLabels = displayAlternateLabels;
 		meterChanged = true;
@@ -877,6 +1011,11 @@ public class Meter {
 		return displayAlternateScaleLabels;
 	}
 
+	/**
+	 * These can be any text
+	 * 
+	 * @param displayAlternateLabels
+	 */
 	public void setAlternateScaleLabels(String[] labels) {
 		if (labels.length == scaleLabels.length) {
 			alternateScaleLabels = labels;
@@ -891,8 +1030,13 @@ public class Meter {
 		return alternateScaleLabels;
 	}
 
-	public void setMeterScaleOffsetFromPivotPoint(int lOffset) {
-		meterScaleOffsetFromPivotPoint = scale(lOffset);
+	/**
+	 * The arc length of the scale labels from the pivot point.
+	 * 
+	 * @param lOffset
+	 */
+	public void setMeterScaleOffsetFromPivotPoint(int scaleOffset) {
+		meterScaleOffsetFromPivotPoint = scale(scaleOffset);
 		meterChanged = true;
 	}
 
@@ -900,6 +1044,12 @@ public class Meter {
 		return meterScaleOffsetFromPivotPoint;
 	}
 
+	/**
+	 * Disable the display of the last scale label for a full circle
+	 * meter to prevent the last label from overwriting the first one
+	 * 
+	 * @param displayLastLabel
+	 */
 	public void setDisplayLastScaleLabel(boolean displayLastLabel) {
 		displayLastScaleLabel = displayLastLabel;
 		meterChanged = true;
@@ -909,12 +1059,16 @@ public class Meter {
 		return displayLastScaleLabel;
 	}
 
+	// Draw the labels and try to position them correctly.
+	// Note: long labels would require the adjustment of the arc to
+	// provide extra spacing.
 	private void drawMeterScaleLabels() {
 		float labelX;
 		float labelY;
 		String[] useLabels = null;
 		double currentTicRadians = PApplet.radians((float) arcMinDegrees);
-		double ticSeparation = (PApplet.radians((float) arcMaxDegrees) - PApplet.radians((float) arcMinDegrees))
+		double ticSeparation = (PApplet.radians((float) arcMaxDegrees) - 
+				PApplet.radians((float) arcMinDegrees))
 				/ (scaleLabels.length - 1);
 		// Determine which scale array to use.
 		if (displayAlternateScaleLabels == true) {
@@ -939,9 +1093,11 @@ public class Meter {
 			if (displayLastScaleLabel == false && i == labelLength - 1) {
 				continue;
 			}
-			labelX = pivotPointX + (PApplet.cos((float) currentTicRadians) * meterScaleOffsetFromPivotPoint);
-			labelY = pivotPointY + PApplet.sin((float) currentTicRadians) * meterScaleOffsetFromPivotPoint
-					+ (p.textAscent() + p.textDescent()) / 2;
+			labelX = pivotPointX + (PApplet.cos((float) currentTicRadians) * 
+					meterScaleOffsetFromPivotPoint);
+			labelY = pivotPointY + PApplet.sin((float) currentTicRadians) * 
+					meterScaleOffsetFromPivotPoint +
+					(p.textAscent() + p.textDescent()) / 2;
 			mLabels.text(useLabels[i], labelX, labelY);
 			currentTicRadians += ticSeparation;
 		}
@@ -950,8 +1106,9 @@ public class Meter {
 
 	public void setLongTicMarkLength(int longTicLength) {
 		if (longTicLength < shortTicMarkLength) {
-			String errorMessage = "Long tic mark length )" + longTicLength + " < Short tic mark length ("
-					+ shortTicMarkLength + ")";
+			String errorMessage = "Long tic mark length )" + longTicLength + 
+					" < Short tic mark length (" +
+					shortTicMarkLength + ")";
 			displayErrorMessage(errorMessage);
 		}
 		longTicMarkLength = scale(longTicLength);
@@ -964,7 +1121,8 @@ public class Meter {
 
 	public void setShortTicMarkLength(int shortTicLength) {
 		if (shortTicLength > longTicMarkLength) {
-			String errorMessage = "Short tic mark length (" + shortTicLength + ") > Long tic mark length ("
+			String errorMessage = "Short tic mark length (" + shortTicLength + 
+					") > Long tic mark length ("
 					+ longTicMarkLength + ")";
 			displayErrorMessage(errorMessage);
 		}
@@ -976,12 +1134,18 @@ public class Meter {
 		return shortTicMarkLength;
 	}
 
-	public void setshortTicsBetweenLongTics(int shortTicsBetweenLong) {
-		shortTicsBetweenLongTics = shortTicsBetweenLong;
+	/**
+	 * Sets the number of short tic marks between
+	 * the long ones.
+	 * 
+	 * @param numShortTics
+	 */
+	public void setShortTicsBetweenLongTics(int numShortTics) {
+		shortTicsBetweenLongTics = numShortTics;
 		meterChanged = true;
 	}
 
-	public int getshortTicsBetweenLongTics() {
+	public int getShortTicsBetweenLongTics() {
 		return shortTicsBetweenLongTics;
 	}
 
@@ -1062,6 +1226,11 @@ public class Meter {
 		mTics.endDraw();
 	}
 
+	/**
+	 * Determine meter value (needle position) relative to the sensor reading
+	 * 
+	 * @param newSensorReading
+	 */
 	public void updateMeterReading(int newSensorReading) {
 		// Determine needle position relative to meter scale
 		// Use the first and last values from the scaleLabels array
@@ -1089,6 +1258,11 @@ public class Meter {
 		return needleColor;
 	}
 
+	/**
+	 * The width of the needle
+	 * 
+	 * @param size
+	 */
 	public void setNeedleSize(int size) {
 		needleSize = scale(size);
 	}
@@ -1097,6 +1271,9 @@ public class Meter {
 		return needleSize;
 	}
 
+	// Draw the needle at its new position.
+	// Display sensor values if enabled.
+	// Display warning messages if enabled.
 	private void drawMeterNeedle() {
 		float needleX = pivotPointX + (PApplet.cos(newMeterPosition) * needleLength);
 		float needleY = pivotPointY + PApplet.sin(newMeterPosition) * needleLength;
