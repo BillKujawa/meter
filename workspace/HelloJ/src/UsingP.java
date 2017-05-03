@@ -73,7 +73,7 @@ public class UsingP extends PApplet {
 	//	m.setMeterWidth((int)random(50, 700));
 	//	m.setDisplayDigitalSensorValues(true);
 		int newSensorReading = 120;
-	//	newSensorReading = (int)random(0, 255);
+		newSensorReading = (int)random(0, 255);
 	//	m.setDisplayArc(false);
 	//	stroke(m.getMeterFrameColor());
 	//	ellipse(width - 20, height - 20, 25, 25);

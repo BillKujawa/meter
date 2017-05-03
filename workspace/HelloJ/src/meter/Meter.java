@@ -1014,7 +1014,7 @@ public class Meter {
 	/**
 	 * These can be any text
 	 * 
-	 * @param displayAlternateLabels
+	 * @param labels
 	 */
 	public void setAlternateScaleLabels(String[] labels) {
 		if (labels.length == scaleLabels.length) {
@@ -1033,7 +1033,7 @@ public class Meter {
 	/**
 	 * The arc length of the scale labels from the pivot point.
 	 * 
-	 * @param lOffset
+	 * @param scaleOffset
 	 */
 	public void setMeterScaleOffsetFromPivotPoint(int scaleOffset) {
 		meterScaleOffsetFromPivotPoint = scale(scaleOffset);
