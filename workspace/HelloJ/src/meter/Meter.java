@@ -1,5 +1,7 @@
 package meter;
 
+import java.util.Arrays;
+
 import processing.core.*;
 
 /**
@@ -1073,14 +1075,17 @@ public class Meter {
 		// Determine which scale array to use.
 		if (displayAlternateScaleLabels == true) {
 			if (alternateScaleLabels != null) {
-				useLabels = alternateScaleLabels.clone();
+				useLabels = (String[]) Arrays.copyOf(alternateScaleLabels, alternateScaleLabels.length);
+	//			useLabels = alternateScaleLabels.clone();
 			} else {
 				String errorMessage = "alternateScaleLabels undefined, using scaleLabels.";
 				displayErrorMessage(errorMessage);
-				useLabels = scaleLabels.clone();
+				useLabels = (String[]) Arrays.copyOf(scaleLabels, scaleLabels.length);
+	//			useLabels = scaleLabels.clone();
 			}
 		} else {
-			useLabels = scaleLabels.clone();
+			useLabels = (String[]) Arrays.copyOf(scaleLabels, scaleLabels.length);
+	//		useLabels = scaleLabels.clone();
 		}
 		int labelLength = useLabels.length;
 		mLabels = p.createGraphics(p.width, p.height);
@@ -1289,12 +1294,14 @@ public class Meter {
 			mNeedle.fill(informationAreaFontColor);
 			mNeedle.textAlign(PConstants.CENTER);
 			mNeedle.textSize(informationAreaFontSize);
-			if (displayOnlySensorValue == false) {
+/*			if (displayOnlySensorValue == false) {
 				informationText = String.format(informationAreaText, newSensorReading, newSensorValue);
 			} else {
 				informationText = String.format(informationAreaText, newSensorValue);
-			}
+			}			
 			mNeedle.text(informationText, meterX + (meterWidth / 2), meterY + meterHeight - informationAreaTextYOffset);
+*/
+			mNeedle.text(informationAreaText, meterX + (meterWidth / 2), meterY + meterHeight - informationAreaTextYOffset);
 		}
 
 		if (lowSensorWarningActive == true) {
