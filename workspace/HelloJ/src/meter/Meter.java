@@ -59,14 +59,16 @@ public class Meter {
 
 	// Information area at bottom of meter for displaying sensor values
 	private int informationAreaFontSize;
-	private String informationAreaText;
+//	private String informationAreaReadingText;
+//	private String informationAreaMidText;
+//	private String informationAreaValueText;
 	// Adjust the text spacing from bottom of meter.
 	private int informationAreaTextYOffset;
 	private String informationAreaFontName;
 	private PFont informationAreaFont;
 	private int informationAreaFontColor;
-	private boolean displayDigitalSensorValues;
-	private boolean displayOnlySensorValue;
+//	private boolean displayDigitalSensorReading;
+	private boolean displayDigitalMeterValue;
 
 	// Display a title at the top of the meter.
 	private String meterTitleFontName;
@@ -201,11 +203,13 @@ public class Meter {
 
 		setInformationAreaFontSize(20);
 		setInformationAreaTextYOffset(10);
-		setInformationAreaText("Sensor: % 4d -> Value: %.2f");
+//		setInformationAreaReadingText("Sensor: % 4d");
+//		setInformationAreaMidText(" -> ");
+//		setInformationAreaValueText("Value: %.2f");
 		setInformationAreaFontName("DejaVu Sans Mono bold");
 		setInformationAreaFontColor(p.color(0, 0, 255));
-		setDisplayDigitalSensorValues(false);
-		setDisplayOnlySensorValue(false);
+//		setDisplayDigitalSensorReading(false);
+		setDisplayDigitalMeterValue(false);
 
 		setMeterTitleFontSize(24);
 		setMeterTitleFontName("Liberation Sans Bold");
@@ -310,25 +314,54 @@ public class Meter {
 		p.image(mNeedle, 0, 0);
 	}
 
-	/**
-	 * Enable display of values at bottom of meter.
+	/*
+	 * Enable display of sensor reading at bottom of meter.
 	 * 
-	 * @param displayDigitalValues
+	 * @param displaySensorReading
 	 */
-	public void setDisplayDigitalSensorValues(boolean displayDigitalValues) {
-		displayDigitalSensorValues = displayDigitalValues;
+/*	public void setDisplayDigitalSensorReading(boolean displaySensorReading) {
+		displayDigitalSensorReading = displaySensorReading;
 		meterChanged = true;
 	}
 
-	public boolean getDisplayDigitalSensorValues() {
-		return displayDigitalSensorValues;
+	public boolean getDisplayDigitalSensorReading() {
+		return displayDigitalSensorReading;
+	}
+*/	
+	/**
+	 * Enable display of Meter Value at bottom of meter.
+	 * 
+	 * @param displayMeterValue
+	 */
+	public void setDisplayDigitalMeterValue(boolean displayMeterValue) {
+		displayDigitalMeterValue = displayMeterValue;
+		meterChanged = true;
 	}
 
+	public boolean getDisplayDigitalMeterValue() {
+		return displayDigitalMeterValue;
+	}
+	
+	/**
+	 * The sensor meter value 
+	 * 
+	 * @return newSensorValue
+	 */
+	public float getNewSensorValue() {
+		return newSensorValue;
+	}
+	
+	/*
+	 * Standardize warning messages.
+	 */
 	private void displayErrorMessage(String errorMessage) {
 		String msg = "Meter error: " + errorMessage;
 		System.err.println(msg);
 	}
 
+	/*
+	 * Calculate values based upon current scale factor.
+	 */
 	private float scale(float num) {
 		return num * scaleFactor;
 	}
@@ -395,36 +428,63 @@ public class Meter {
 		return informationAreaFontColor;
 	}
 
-	/**
-	 * Change the information area text
-	 * Default is sensor reading and sensor value
-	 * such as (reading = 120; value = 2.35)
+	/*
+	 * Change the information area sensor reading text (left side text)
 	 * 
-	 * @param infoText
+	 * @param readingText
 	 */
-	public void setInformationAreaText(String infoText) {
-		informationAreaText = infoText;
+/*	public void setInformationAreaReadingText(String readingText) {
+		informationAreaReadingText = readingText;
 		meterChanged = true;
 	}
 	
-	public String getInformationAreaText() {
-		return informationAreaText;
+	public String getInformationAreaReadingText() {
+		return informationAreaReadingText;
 	}
-
-	/**
-	 * Display sensor value, not sensor reading
-	 * Should adjust the information area text to correspond
+*/
+	/*
+	 * Change the information area mid text (center text)
+	 * If both reading and meter text are present,
+	 * this allows text between the values.
 	 * 
-	 * @param valueOnly
+	 * @param midText
 	 */
-	public void setDisplayOnlySensorValue(boolean valueOnly) {
-		displayOnlySensorValue = valueOnly;
+/*	public void setInformationAreaMidText(String midText) {
+		informationAreaMidText = midText;
+		meterChanged = true;
+	}
+	
+	public String getInformationAreaMidText() {
+		return informationAreaMidText;
+	}
+*/	
+	/*
+	 * Change the information area meter value text (right side text)
+	 * 
+	 * @param meterValueText
+	 */
+/*	public void setInformationAreaValueText(String meterValueText) {
+		informationAreaValueText = meterValueText;
+		meterChanged = true;
+	}
+	
+	public String getInformationAreaValueText() {
+		return informationAreaValueText;
+	}
+*/
+	/*
+	 * Display digital sensor reading.
+	 * 
+	 * @param displaySensorReading
+	 */
+/*	public void setDisplaSensorReading(boolean displaySensorReading) {
+		displayDigitalSensorReading = displaySensorReading;
 	}
 
-	public boolean getDisplayOnlySensorValue() {
-		return displayOnlySensorValue;
+	public boolean getDisplayDigitalSensorReading() {
+		return displayDigitalSensorReading;
 	}
-
+*/
 	/**
 	 * Activate low sensor warning
 	 * 
@@ -1289,19 +1349,24 @@ public class Meter {
 		mNeedle.strokeWeight(needleSize);
 		mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
 
-		if (displayDigitalSensorValues == true) {
+//		if (displayDigitalSensorReading == true || displayDigitalMeterValue == true) {
+		if (displayDigitalMeterValue == true) {
 			mNeedle.textFont(informationAreaFont);
 			mNeedle.fill(informationAreaFontColor);
 			mNeedle.textAlign(PConstants.CENTER);
 			mNeedle.textSize(informationAreaFontSize);
-/*			if (displayOnlySensorValue == false) {
-				informationText = String.format(informationAreaText, newSensorReading, newSensorValue);
-			} else {
-				informationText = String.format(informationAreaText, newSensorValue);
-			}			
-			mNeedle.text(informationText, meterX + (meterWidth / 2), meterY + meterHeight - informationAreaTextYOffset);
+/*			if (displayDigitalSensorReading == true) {
+				informationText = String.format(informationAreaReadingText, newSensorReading);
+			}
+			if (displayDigitalSensorReading == true && displayDigitalMeterValue == true) {
+				informationText += informationAreaMidText;
+			}
+			if (displayDigitalMeterValue == true) {
+				informationText += String.format(informationAreaValueText, newSensorValue);
+			}
 */
-			mNeedle.text(informationAreaText, meterX + (meterWidth / 2), meterY + meterHeight - informationAreaTextYOffset);
+			informationText = Double.toString(Math.round(newSensorValue * 100.0) / 100.0);
+			mNeedle.text(informationText, meterX + (meterWidth / 2), meterY + meterHeight - informationAreaTextYOffset);
 		}
 
 		if (lowSensorWarningActive == true) {
