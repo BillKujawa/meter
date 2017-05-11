@@ -109,7 +109,7 @@ public class Meter {
 	// The tic marks for indicating the values.
 	private int longTicMarkLength;
 	private int shortTicMarkLength;
-	private int ticMarkSetbackFromArc;
+//	private int ticMarkSetbackFromArc;
 	private int ticMarkOffsetFromPivotPoint;
 	private int ticMarkThickness;
 	private int ticMarkColor;
@@ -235,8 +235,8 @@ public class Meter {
 		setLongTicMarkLength(25);
 		setShortTicMarkLength(14);
 		setShortTicsBetweenLongTics(4);
-		setTicMarkSetbackFromArc(30);
-		setTicMarkOffsetFromPivotPoint(146);
+//		setTicMarkSetbackFromArc(30);
+		setTicMarkOffsetFromPivotPoint(116);
 		setTicMarkThickness(2);
 		setTicMarkColor(p.color(0, 0, 0));
 
@@ -1136,7 +1136,7 @@ public class Meter {
 	public int getShortTicsBetweenLongTics() {
 		return shortTicsBetweenLongTics;
 	}
-
+/*
 	public void setTicMarkSetbackFromArc(int ticSetback) {
 		ticMarkSetbackFromArc = scale(ticSetback);
 		meterChanged = true;
@@ -1145,7 +1145,7 @@ public class Meter {
 	public int getTicMarkSetbackFromArc() {
 		return ticMarkSetbackFromArc;
 	}
-
+*/
 	public void setTicMarkThickness(int ticMarkThickness) {
 		this.ticMarkThickness = scale(ticMarkThickness);
 		meterChanged = true;
@@ -1195,14 +1195,25 @@ public class Meter {
 			} else {
 				ticLength = shortTicMarkLength;
 			}
-			ticX1 = pivotPointX
+/*
+  			ticX1 = pivotPointX
 					+ (PApplet.cos((float) currentTicRadians) * (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc));
 			ticX2 = pivotPointX + (PApplet.cos((float) currentTicRadians)
 					* (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc + ticLength));
 			ticY1 = pivotPointY
 					+ PApplet.sin((float) currentTicRadians) * (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc);
 			ticY2 = pivotPointY + PApplet.sin((float) currentTicRadians)
-					* (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc + ticLength);
+					* (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc + ticLength);			
+ */
+			ticX1 = pivotPointX
+					+ (PApplet.cos((float) currentTicRadians) * ticMarkOffsetFromPivotPoint);
+			ticX2 = pivotPointX + (PApplet.cos((float) currentTicRadians)
+					* (ticMarkOffsetFromPivotPoint + ticLength));
+			ticY1 = pivotPointY
+					+ PApplet.sin((float) currentTicRadians) * ticMarkOffsetFromPivotPoint;
+			ticY2 = pivotPointY + PApplet.sin((float) currentTicRadians)
+					* (ticMarkOffsetFromPivotPoint + ticLength);
+			
 			mTics.line((float) ticX1, (float) ticY1, (float) ticX2, (float) ticY2);
 			if (ticCount > shortTicsBetweenLongTics) {
 				ticCount = 1;
