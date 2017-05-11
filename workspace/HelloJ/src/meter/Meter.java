@@ -124,9 +124,9 @@ public class Meter {
 	private boolean highSensorWarningActive;
 	private float lowSensorWarningValue;
 	private float highSensorWarningValue;
-	private int lowSensorWarningColor;
-	private int midSensorWarningColor;
-	private int highSensorWarningColor;
+	private int lowSensorWarningArcColor;
+	private int midSensorWarningArcColor;
+	private int highSensorWarningArcColor;
 	private String sensorWarningFontName;
 	private PFont sensorWarningFont;
 	private int lowSensorWarningFontColor;
@@ -257,9 +257,9 @@ public class Meter {
 		setSensorWarningTextYOffset(6);
 		setSensorWarningLowText("Warning:\n Low Value");
 		setSensorWarningHighText("Warning:    \nHigh Value ");
-		setLowSensorWarningColor(p.color(0, 0, 255));
-		setMidSensorWarningColor(p.color(0, 255, 0));
-		setHighSensorWarningColor(p.color(255, 70, 0));
+		setLowSensorWarningArcColor(p.color(0, 0, 255));
+		setMidSensorWarningArcColor(p.color(0, 255, 0));
+		setHighSensorWarningArcColor(p.color(255, 70, 0));
 	}
 
 	// Process new sensor reading to the meter value
@@ -462,13 +462,13 @@ public class Meter {
 		return highSensorWarningValue;
 	}
 
-	public void setLowSensorWarningColor(int lowWarningColor) {
-		lowSensorWarningColor = lowWarningColor;
+	public void setLowSensorWarningArcColor(int lowWarningColor) {
+		lowSensorWarningArcColor = lowWarningColor;
 		meterChanged = true;
 	}
 
-	public int getLowSensorWarningColor() {
-		return lowSensorWarningColor;
+	public int getLowSensorWarningArcColor() {
+		return lowSensorWarningArcColor;
 	}
 
 	/**
@@ -477,22 +477,22 @@ public class Meter {
 	 * 
 	 * @param midWarningColor
 	 */
-	public void setMidSensorWarningColor(int midWarningColor) {
-		midSensorWarningColor = midWarningColor;
+	public void setMidSensorWarningArcColor(int midWarningColor) {
+		midSensorWarningArcColor = midWarningColor;
 		meterChanged = true;
 	}
 
-	public int getMidSensorWarningColor() {
-		return midSensorWarningColor;
+	public int getMidSensorWarningArcColor() {
+		return midSensorWarningArcColor;
 	}
 
-	public void setHighSensorWarningColor(int highWarningColor) {
-		highSensorWarningColor = highWarningColor;
+	public void setHighSensorWarningArcColor(int highWarningColor) {
+		highSensorWarningArcColor = highWarningColor;
 		meterChanged = true;
 	}
 
-	public int getHighSensorWarningColor() {
-		return highSensorWarningColor;
+	public int getHighSensorWarningArcColor() {
+		return highSensorWarningArcColor;
 	}
 
 	/**
@@ -913,7 +913,7 @@ public class Meter {
 			}
 			float lowWarningPosition = PApplet.map(lowWarningValue, minScale, maxScale,
 					PApplet.radians((float) arcMinDegrees), PApplet.radians((float) arcMaxDegrees));
-			mArc.stroke(lowSensorWarningColor);
+			mArc.stroke(lowSensorWarningArcColor);
 			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2,
 					PApplet.radians((float) arcMinDegrees), lowWarningPosition, PConstants.OPEN);
 			float highWarningValue;
@@ -924,10 +924,10 @@ public class Meter {
 			}
 			float highWarningPosition = PApplet.map(highWarningValue, minScale, maxScale,
 					PApplet.radians((float) arcMinDegrees), PApplet.radians((float) arcMaxDegrees));
-			mArc.stroke(midSensorWarningColor);
+			mArc.stroke(midSensorWarningArcColor);
 			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2, lowWarningPosition,
 					highWarningPosition, PConstants.OPEN);
-			mArc.stroke(highSensorWarningColor);
+			mArc.stroke(highSensorWarningArcColor);
 			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2, highWarningPosition,
 					PApplet.radians((float) arcMaxDegrees), PConstants.OPEN);
 		} else {
