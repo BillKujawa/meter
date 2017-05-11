@@ -140,7 +140,7 @@ public class Meter {
 	private int needleLength;
 	private int needleColor;
 	// Thickness
-	private int needleSize;
+	private int needleThickness;
 
 	// Width until changed
 	private static int DEFAULTWIDTH = 440;
@@ -243,7 +243,7 @@ public class Meter {
 		setNeedleLength(145);
 		setNeedleColor(p.color(255, 0, 0));
 		// Set the needle width
-		setNeedleSize(1);
+		setNeedleThickness(1);
 
 		setLowSensorWarningActive(false);
 		setHighSensorWarningActive(false);
@@ -1249,14 +1249,14 @@ public class Meter {
 	/**
 	 * The width of the needle
 	 * 
-	 * @param size
+	 * @param thickness
 	 */
-	public void setNeedleSize(int size) {
-		needleSize = scale(size);
+	public void setNeedleThickness(int thickness) {
+		needleThickness = scale(thickness);
 	}
 
-	public int getNeedleSize() {
-		return needleSize;
+	public int getNeedleThickness() {
+		return needleThickness;
 	}
 
 	// Draw the needle at its new position.
@@ -1269,7 +1269,7 @@ public class Meter {
 		mNeedle = p.createGraphics(p.width, p.height);
 		mNeedle.beginDraw();
 		mNeedle.stroke(needleColor);
-		mNeedle.strokeWeight(needleSize);
+		mNeedle.strokeWeight(needleThickness);
 		mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
 
 		if (displayDigitalMeterValue == true) {
