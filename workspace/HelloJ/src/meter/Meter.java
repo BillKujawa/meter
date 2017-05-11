@@ -219,8 +219,8 @@ public class Meter {
 		setArcPositionOffset(150);
 		setArcColor(p.color(0, 0, 0));
 		setArcThickness(6);
-		setMinArcDegrees(180.0); // PI (left side)
-		setMaxArcDegrees(360.0); // TWO_PI (right side)
+		setArcMinDegrees(180.0); // PI (left side)
+		setArcMaxDegrees(360.0); // TWO_PI (right side)
 
 		setMeterScaleFontSize(16);
 		setMeterScaleFontName("DejaVu Sans Bold");
@@ -861,16 +861,17 @@ public class Meter {
 	 * 
 	 * @param minDegrees
 	 */
-	public void setMinArcDegrees(double minDegrees) {
+	public void setArcMinDegrees(double minDegrees) {
 		if ((minDegrees > arcMaxDegrees) && (arcMaxDegrees > 0)) {
-			String errorMessage = "Arc Min Degrees (" + minDegrees + ") > Arc Max Degrees (" + arcMaxDegrees + ")";
+			String errorMessage = "Arc Min Degrees (" + minDegrees + ") > "
+					+ "Arc Max Degrees (" + arcMaxDegrees + ")";
 			displayErrorMessage(errorMessage);
 		}
 		arcMinDegrees = minDegrees;
 		meterChanged = true;
 	}
 
-	public double getMinArcDegrees() {
+	public double getArcMinDegrees() {
 		return arcMinDegrees;
 	}
 
@@ -880,16 +881,17 @@ public class Meter {
 	 * 
 	 * @param maxDegrees
 	 */
-	public void setMaxArcDegrees(double maxDegrees) {
+	public void setArcMaxDegrees(double maxDegrees) {
 		if (maxDegrees < arcMinDegrees) {
-			String errorMessage = "Arc Max Degrees (" + maxDegrees + ") < Arc Min Degrees (" + arcMinDegrees + ")";
+			String errorMessage = "Arc Max Degrees (" + maxDegrees + ") < "
+					+ "Arc Min Degrees (" + arcMinDegrees + ")";
 			displayErrorMessage(errorMessage);
 		}
 		arcMaxDegrees = maxDegrees;
 		meterChanged = true;
 	}
 
-	public double getMaxArcDegrees() {
+	public double getArcMaxDegrees() {
 		return arcMaxDegrees;
 	}
 
