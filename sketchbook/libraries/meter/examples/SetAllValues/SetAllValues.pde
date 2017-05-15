@@ -12,12 +12,8 @@
  Allow access to HEIGHTTOWIDTHRATIOHALFCIRCLE?
  Allow access to PIVOTPOINTRATIO?
  
- What is the difference in appearance between
- ticMarkSetbackFromArc and
- ticMarkOffsetFromPivotPoint?
- Use one or the other, not both.
+ Change interface or just add another method: getCurrentMeterValue
  
- Change needleSize to needleThickness.
  
  Non-Hardware example.
  
@@ -44,6 +40,7 @@ void setup() {
   // Display a full circle meter frame.
   m = new Meter(this, 125, 25, true); // Instantiate a full circle meter class.
 
+  m.setMeterWidth(400);
   m.setMeterFrameThickness(10);
   m.setMeterFrameColor(color(245, 10, 14));
 
@@ -63,8 +60,8 @@ void setup() {
   m.setArcColor(color(141, 113, 178));
   m.setArcThickness(10);
   // Define where the scale labels will appear
-  m.setMinArcDegrees(90.0); // (start)
-  m.setMaxArcDegrees(360.0); // ( end)
+  m.setArcMinDegrees(90.0); // (start)
+  m.setArcMaxDegrees(360.0); // ( end)
 
   // Meter Scale
   String[] scaleLabels = {"0", "10", "20", "30", "40", "50", "60", "70", "80"};
@@ -78,12 +75,12 @@ void setup() {
   m.setLongTicMarkLength(60);
   m.setShortTicMarkLength(10);
   m.setShortTicsBetweenLongTics(9);
-  m.setTicMarkSetbackFromArc(40);
+  m.setTicMarkColor(color(250, 150, 20));
+  m.setTicMarkThickness(4);
   m.setTicMarkOffsetFromPivotPoint(130);
 
-  // Display only the digital sensor values input in the Information Area.
-  m.setInformationAreaText("Sensor: % 4d");
-  m.setDisplayDigitalSensorValues(true);
+  // Display the digital meter value in the Information Area.
+  m.setDisplayDigitalMeterValue(true);
   m.setInformationAreaFontSize(26);
   m.setInformationAreaTextYOffset(15);
   m.setInformationAreaFontName("Verdana Italic");
@@ -96,7 +93,7 @@ void setup() {
   // Needle
   m.setNeedleLength(160);
   m.setNeedleColor(color(82, 115, 232));
-  m.setNeedleSize(4);
+  m.setNeedleThickness(4);
 
   m.setLowSensorWarningActive(true);
   m.setLowSensorWarningValue(23.0);
@@ -109,9 +106,9 @@ void setup() {
   m.setSensorWarningTextYOffset(25);
   m.setSensorWarningLowText(" Cold\n  Today");
   m.setSensorWarningHighText("HOT        \nTomorrow");
-  m.setLowSensorWarningColor(color(250, 255, 3));
-  m.setMidSensorWarningColor(color(240, 240, 240));
-  m.setHighSensorWarningColor(color(45, 187, 237));
+  m.setLowSensorWarningArcColor(color(250, 255, 3));
+  m.setMidSensorWarningArcColor(color(240, 240, 240));
+  m.setHighSensorWarningArcColor(color(45, 187, 237));
 }
 
 void draw() {

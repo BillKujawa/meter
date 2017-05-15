@@ -115,6 +115,7 @@ public class Meter {
 	private int ticMarkColor;
 
 	// Map the sensor reading to meter value and needle position.
+	// currentMeterValue = newSensorValue to make more intuitive for users.
 	private int newSensorReading;
 	private float newSensorValue;
 	private float newMeterPosition;
@@ -323,9 +324,10 @@ public class Meter {
 	/**
 	 * The sensor meter value 
 	 * 
-	 * @return newSensorValue
+	 * @return currentMeterValue
 	 */
-	public float getNewSensorValue() {
+	// Internally currentMeterValue = newSensorValue
+	public float getCurrentMeterValue() {
 		return newSensorValue;
 	}
 	
@@ -693,6 +695,10 @@ public class Meter {
 	public void setMeterTitle(String title) {
 		meterTitle = title;
 		meterChanged = true;
+	}
+	
+	public String getMeterTitle() {
+		return meterTitle;
 	}
 
 	/**
@@ -1195,16 +1201,6 @@ public class Meter {
 			} else {
 				ticLength = shortTicMarkLength;
 			}
-/*
-  			ticX1 = pivotPointX
-					+ (PApplet.cos((float) currentTicRadians) * (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc));
-			ticX2 = pivotPointX + (PApplet.cos((float) currentTicRadians)
-					* (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc + ticLength));
-			ticY1 = pivotPointY
-					+ PApplet.sin((float) currentTicRadians) * (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc);
-			ticY2 = pivotPointY + PApplet.sin((float) currentTicRadians)
-					* (ticMarkOffsetFromPivotPoint - ticMarkSetbackFromArc + ticLength);			
- */
 			ticX1 = pivotPointX
 					+ (PApplet.cos((float) currentTicRadians) * ticMarkOffsetFromPivotPoint);
 			ticX2 = pivotPointX + (PApplet.cos((float) currentTicRadians)
