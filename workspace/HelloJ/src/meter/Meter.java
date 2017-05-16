@@ -18,7 +18,8 @@ import processing.core.*;
  * instantiating a meter object. If changing the width in 
  * the Draw() loop, the old meter is not removed.
  * 
- * Some methods will generate non-fatal warning messages.
+ * Some methods will generate non-fatal warning messages depending
+ * upon what is changed first.
  * 
  * May be used without microprocessor hardware to display software values.
  * 
@@ -56,6 +57,7 @@ public class Meter {
 	// The meter frame.
 	private int meterFrameThickness;
 	private int meterFrameColor;
+	private int meterFrameStyle;
 
 	// Information area at bottom of meter for displaying sensor values
 	private int informationAreaFontSize;
@@ -198,6 +200,7 @@ public class Meter {
 	// Note: changing the order can cause interesting and unwanted results.
 	private void initializeDefaultValues() {
 		setMeterFrameColor(p.color(0, 0, 0));
+		setMeterFrameStyle(PConstants.BEVEL);
 
 		setInformationAreaFontSize(20);
 		setInformationAreaTextYOffset(10);
@@ -637,16 +640,28 @@ public class Meter {
 			meterHeight = (int) (meterWidth * HEIGHTTOWIDTHRATIOHALFCIRCLE) + 
 					meterFrameThickness * 2;
 		}
-		// Is this necessary?
-//		initializeDefaultValues();
-
-		// reset needle pivot point
+		// Reset needle pivot point
 		pivotPointX = meterWidth / 2 + meterX;
 		pivotPointY = meterY + meterFrameThickness + (int) (meterWidth * PIVOTPOINTRATIO);		
 	}
 
 	public int getMeterFrameThickness() {
 		return meterFrameThickness;
+	}
+	
+	/**
+	 * The integer frame corner styles can be set to:
+	 * PConstants.MITER (8),
+	 * PConstants.ROUND (2), or
+	 * PConstants.BEVEL (32).
+	 */
+	public void setMeterFrameStyle(int style) {
+		meterFrameStyle = style;
+		meterChanged = true;
+	}
+	
+	public int getMeterFrameStyle() {
+		return meterFrameStyle;
 	}
 
 	public void setMeterFrameColor(int frameColor) {
@@ -675,7 +690,7 @@ public class Meter {
 		mFrame.beginDraw();
 		mFrame.stroke(meterFrameColor);
 		mFrame.strokeWeight(meterFrameThickness);
-		mFrame.strokeJoin(PConstants.BEVEL);
+		mFrame.strokeJoin(meterFrameStyle);
 		mFrame.rect(meterX + meterFrameThickness / 2, // Left side
 				meterY + meterFrameThickness / 2, // Top
 				meterWidth - meterFrameThickness, // Right side
