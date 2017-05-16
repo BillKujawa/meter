@@ -7,13 +7,16 @@
  part of the frame, change the font color.
  Change the style of the frame corners:
  PConstants.MITER (8), PConstants.BEVEL (32), PConstants.ROUND (2).
+ 
+ Note: the same offset adjustments could be used to accomodate
+ longer scale labels.
  */
 import meter.*;
 
 Meter m, m2;
 
 void setup() {
-  size(600, 700);
+  size(500, 650);
   background(255, 255, 200);
 
   fill(120, 50, 0);
