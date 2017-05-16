@@ -109,7 +109,6 @@ public class Meter {
 	// The tic marks for indicating the values.
 	private int longTicMarkLength;
 	private int shortTicMarkLength;
-//	private int ticMarkSetbackFromArc;
 	private int ticMarkOffsetFromPivotPoint;
 	private int ticMarkThickness;
 	private int ticMarkColor;
@@ -145,6 +144,8 @@ public class Meter {
 
 	// Width until changed
 	private static int DEFAULTWIDTH = 440;
+	// Meter frame thickness until changed
+	private static int DEFAULTFRAMETHICKNESS = 4;
 	// Sets half circle height
 	private static float HEIGHTTOWIDTHRATIOHALFCIRCLE = 0.58f;
 	// Sets full circle height
@@ -188,7 +189,7 @@ public class Meter {
 		meterX = x;
 		meterY = y;
 		setFullCircle(fullCircle);
-		setMeterFrameThickness(4);
+		setMeterFrameThickness(DEFAULTFRAMETHICKNESS);
 		setMeterWidth(DEFAULTWIDTH);
 	}
 	
@@ -236,7 +237,6 @@ public class Meter {
 		setLongTicMarkLength(25);
 		setShortTicMarkLength(14);
 		setShortTicsBetweenLongTics(4);
-//		setTicMarkSetbackFromArc(30);
 		setTicMarkOffsetFromPivotPoint(116);
 		setTicMarkThickness(2);
 		setTicMarkColor(p.color(0, 0, 0));
@@ -268,13 +268,13 @@ public class Meter {
 	// and associated changed text or warning messages.
 	public void updateMeter(int newSensorReading) {
 		if (newSensorReading < minInputSignal) {
-			String errorMessage = "New sensor reading (" + newSensorReading + ") < Min sensor reading ("
-					+ minInputSignal + ")";
+			String errorMessage = "New sensor reading (" + newSensorReading + ") < " + 
+					"Min sensor reading (" + minInputSignal + ")";
 			displayErrorMessage(errorMessage);
 		}
 		if (newSensorReading > maxInputSignal) {
-			String errorMessage = "New sensor reading (" + newSensorReading + ") > Max sensor reading ("
-					+ maxInputSignal + ")";
+			String errorMessage = "New sensor reading (" + newSensorReading + ") >" + 
+					" Max sensor reading (" + maxInputSignal + ")";
 			displayErrorMessage(errorMessage);
 		}
 		this.newSensorReading = newSensorReading;
@@ -386,7 +386,8 @@ public class Meter {
 	 */
 	public void setInformationAreaFontName(String fontName) {
 		informationAreaFontName = fontName;
-		informationAreaFont = p.createFont(informationAreaFontName, informationAreaFontSize);
+		informationAreaFont = p.createFont(informationAreaFontName, 
+				informationAreaFontSize);
 		meterChanged = true;
 	}
 
@@ -438,8 +439,8 @@ public class Meter {
 
 	public void setLowSensorWarningValue(float sensorValue) {
 		if (sensorValue > highSensorWarningValue) {
-			String errorMessage = "Low sensor warning value (" + sensorValue + ") > High sensor warning value ("
-					+ highSensorWarningValue + ")";
+			String errorMessage = "Low sensor warning value (" + sensorValue + 
+					") > High sensor warning value (" + highSensorWarningValue + ")";
 			displayErrorMessage(errorMessage);
 		}
 		lowSensorWarningValue = sensorValue;
@@ -452,8 +453,8 @@ public class Meter {
 
 	public void setHighSensorWarningValue(float sensorValue) {
 		if (sensorValue < lowSensorWarningValue) {
-			String errorMessage = "High sensor warning value (" + sensorValue + ") < Low sensor warning value ("
-					+ lowSensorWarningValue + ")";
+			String errorMessage = "High sensor warning value (" + sensorValue + 
+					") < Low sensor warning value (" + lowSensorWarningValue + ")";
 			displayErrorMessage(errorMessage);
 		}
 		highSensorWarningValue = sensorValue;
@@ -578,9 +579,11 @@ public class Meter {
 
 		meterWidth = mWidth;
 		if (fullCircle == true) {
-			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOFULLCIRCLE) + meterFrameThickness * 2;
+			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOFULLCIRCLE) + 
+					meterFrameThickness * 2;
 		} else {
-			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOHALFCIRCLE) + meterFrameThickness * 2;
+			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOHALFCIRCLE) + 
+					meterFrameThickness * 2;
 		}
 
 		if (mWidth != DEFAULTWIDTH) {
@@ -624,6 +627,22 @@ public class Meter {
 	public void setMeterFrameThickness(int frameThickness) {
 		meterFrameThickness = scale(frameThickness);
 		meterChanged = true;
+
+		// Since meterHeight has already been calculated,
+		// it needs to be adjusted to account for the new meterFrameThickness
+		if (fullCircle == true) {
+			meterHeight = (int) (meterWidth * HEIGHTTOWIDTHRATIOFULLCIRCLE) + 
+					meterFrameThickness * 2;
+		} else {
+			meterHeight = (int) (meterWidth * HEIGHTTOWIDTHRATIOHALFCIRCLE) + 
+					meterFrameThickness * 2;
+		}
+		// Is this necessary?
+//		initializeDefaultValues();
+
+		// reset needle pivot point
+		pivotPointX = meterWidth / 2 + meterX;
+		pivotPointY = meterY + meterFrameThickness + (int) (meterWidth * PIVOTPOINTRATIO);		
 	}
 
 	public int getMeterFrameThickness() {
@@ -793,7 +812,8 @@ public class Meter {
 	 */
 	public void setMinInputSignal(int minIn) {
 		if (minIn > maxInputSignal) {
-			String errorMessage = "Min input signal (" + minIn + " > Max input signal (" + maxInputSignal + ")";
+			String errorMessage = "Min input signal (" + minIn + " > "
+					+ "Max input signal (" + maxInputSignal + ")";
 			displayErrorMessage(errorMessage);
 		}
 		minInputSignal = minIn;
@@ -869,8 +889,8 @@ public class Meter {
 	 */
 	public void setArcMinDegrees(double minDegrees) {
 		if ((minDegrees > arcMaxDegrees) && (arcMaxDegrees > 0)) {
-			String errorMessage = "Arc Min Degrees (" + minDegrees + ") > "
-					+ "Arc Max Degrees (" + arcMaxDegrees + ")";
+			String errorMessage = "Arc Min Degrees (" + minDegrees + 
+					") > " + "Arc Max Degrees (" + arcMaxDegrees + ")";
 			displayErrorMessage(errorMessage);
 		}
 		arcMinDegrees = minDegrees;
@@ -889,8 +909,8 @@ public class Meter {
 	 */
 	public void setArcMaxDegrees(double maxDegrees) {
 		if (maxDegrees < arcMinDegrees) {
-			String errorMessage = "Arc Max Degrees (" + maxDegrees + ") < "
-					+ "Arc Min Degrees (" + arcMinDegrees + ")";
+			String errorMessage = "Arc Max Degrees (" + maxDegrees + 
+					") < " + "Arc Min Degrees (" + arcMinDegrees + ")";
 			displayErrorMessage(errorMessage);
 		}
 		arcMaxDegrees = maxDegrees;
@@ -918,7 +938,8 @@ public class Meter {
 				lowWarningValue = minScale;
 			}
 			float lowWarningPosition = PApplet.map(lowWarningValue, minScale, maxScale,
-					PApplet.radians((float) arcMinDegrees), PApplet.radians((float) arcMaxDegrees));
+					PApplet.radians((float) arcMinDegrees), 
+					PApplet.radians((float) arcMaxDegrees));
 			mArc.stroke(lowSensorWarningArcColor);
 			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2,
 					PApplet.radians((float) arcMinDegrees), lowWarningPosition, PConstants.OPEN);
@@ -929,16 +950,19 @@ public class Meter {
 				highWarningValue = maxScale;
 			}
 			float highWarningPosition = PApplet.map(highWarningValue, minScale, maxScale,
-					PApplet.radians((float) arcMinDegrees), PApplet.radians((float) arcMaxDegrees));
+					PApplet.radians((float) arcMinDegrees), 
+					PApplet.radians((float) arcMaxDegrees));
 			mArc.stroke(midSensorWarningArcColor);
-			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2, lowWarningPosition,
-					highWarningPosition, PConstants.OPEN);
+			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2, 
+					lowWarningPosition, highWarningPosition, PConstants.OPEN);
 			mArc.stroke(highSensorWarningArcColor);
-			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2, highWarningPosition,
-					PApplet.radians((float) arcMaxDegrees), PConstants.OPEN);
+			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2, 
+					highWarningPosition, PApplet.radians((float) arcMaxDegrees), PConstants.OPEN);
 		} else {
 			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2,
-					PApplet.radians((float) arcMinDegrees), PApplet.radians((float) arcMaxDegrees), PConstants.OPEN);
+					PApplet.radians((float) arcMinDegrees), 
+					PApplet.radians((float) arcMaxDegrees), 
+					PConstants.OPEN);
 		}
 		mArc.endDraw();
 	}
@@ -1185,8 +1209,8 @@ public class Meter {
 		int ticLength;
 		int longTicCount = scaleLabels.length;
 		int totalTicCount = longTicCount + ((longTicCount - 1) * shortTicsBetweenLongTics);
-		double ticSeparation = (PApplet.radians((float) arcMaxDegrees) - PApplet.radians((float) arcMinDegrees))
-				/ (totalTicCount - 1);
+		double ticSeparation = (PApplet.radians((float) arcMaxDegrees) - 
+				PApplet.radians((float) arcMinDegrees)) / (totalTicCount - 1);
 		// Start drawing from the left side.
 		double currentTicRadians = PApplet.radians((float) arcMinDegrees);
 		int ticCount = 1;
@@ -1201,14 +1225,14 @@ public class Meter {
 			} else {
 				ticLength = shortTicMarkLength;
 			}
-			ticX1 = pivotPointX
-					+ (PApplet.cos((float) currentTicRadians) * ticMarkOffsetFromPivotPoint);
-			ticX2 = pivotPointX + (PApplet.cos((float) currentTicRadians)
-					* (ticMarkOffsetFromPivotPoint + ticLength));
-			ticY1 = pivotPointY
-					+ PApplet.sin((float) currentTicRadians) * ticMarkOffsetFromPivotPoint;
-			ticY2 = pivotPointY + PApplet.sin((float) currentTicRadians)
-					* (ticMarkOffsetFromPivotPoint + ticLength);
+			ticX1 = pivotPointX +
+					(PApplet.cos((float) currentTicRadians) * ticMarkOffsetFromPivotPoint);
+			ticX2 = pivotPointX + (PApplet.cos((float) currentTicRadians) *
+					(ticMarkOffsetFromPivotPoint + ticLength));
+			ticY1 = pivotPointY +
+					PApplet.sin((float) currentTicRadians) * ticMarkOffsetFromPivotPoint;
+			ticY2 = pivotPointY + PApplet.sin((float) currentTicRadians) *
+					(ticMarkOffsetFromPivotPoint + ticLength);
 			
 			mTics.line((float) ticX1, (float) ticY1, (float) ticX2, (float) ticY2);
 			if (ticCount > shortTicsBetweenLongTics) {
@@ -1231,9 +1255,10 @@ public class Meter {
 		// Use the first and last values from the scaleLabels array
 		float maxScale = Float.parseFloat(scaleLabels[scaleLabels.length - 1]);
 		float minScale = Float.parseFloat(scaleLabels[0]);
-		newSensorValue = PApplet.map((float) newSensorReading, (float) minInputSignal, (float) maxInputSignal, minScale,
-				maxScale);
-		newMeterPosition = PApplet.map(newSensorValue, minScale, maxScale, PApplet.radians((float) arcMinDegrees),
+		newSensorValue = PApplet.map((float) newSensorReading, (float) minInputSignal, 
+				(float) maxInputSignal, minScale, maxScale);
+		newMeterPosition = PApplet.map(newSensorValue, minScale, maxScale, 
+				PApplet.radians((float) arcMinDegrees), 
 				PApplet.radians((float) arcMaxDegrees));
 	}
 
@@ -1296,7 +1321,8 @@ public class Meter {
 				mNeedle.textSize(sensorWarningFontSize);
 				mNeedle.textAlign(PConstants.LEFT);
 				mNeedle.text("  " + sensorWarningLowText, meterX + meterFrameThickness,
-						meterY + p.textAscent() + meterFrameThickness + sensorWarningTextYOffset);
+						meterY + p.textAscent() + meterFrameThickness + 
+						sensorWarningTextYOffset);
 			}
 		}
 		if (highSensorWarningActive == true) {
@@ -1306,7 +1332,8 @@ public class Meter {
 				mNeedle.textSize(sensorWarningFontSize);
 				mNeedle.textAlign(PConstants.RIGHT);
 				mNeedle.text(sensorWarningHighText + "  ", meterX + meterWidth - meterFrameThickness,
-						meterY + p.textAscent() + meterFrameThickness + sensorWarningTextYOffset);
+						meterY + p.textAscent() + meterFrameThickness + 
+						sensorWarningTextYOffset);
 			}
 		}
 		mNeedle.endDraw();
