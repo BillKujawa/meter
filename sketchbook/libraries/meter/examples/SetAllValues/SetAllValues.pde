@@ -63,6 +63,8 @@ void setup() {
   // Define where the scale labels will appear
   m.setArcMinDegrees(90.0); // (start)
   m.setArcMaxDegrees(360.0); // ( end)
+  m.setMinScaleValue(0);
+  m.setMaxScaleValue(80);
 
   // Meter Scale
   String[] scaleLabels = {"0", "10", "20", "30", "40", "50", "60", "70", "80"};

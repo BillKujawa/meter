@@ -63,8 +63,8 @@ void setup() {
   System.out.println("displayLastScaleLabel: " + m.getDisplayLastScaleLabel());
   // Display the String array as a string
   System.out.println("scaleLabels: \"" + join(m.getScaleLabels(), "\", \"") + "\"");
-//  System.out.println("displayAlternateScaleLabels: " + m.getDisplayAlternateScaleLabels());
-  System.out.println("alternateScaleLabels: " + m.getAlternateScaleLabels());
+  System.out.println("minScaleValue: " + m.getMinScaleValue());
+  System.out.println("maxScaleValue: " + m.getMaxScaleValue());
   System.out.println("longTicMarkLength: " + m.getLongTicMarkLength());
   System.out.println("shortTicMarkLength: " + m.getShortTicMarkLength());
   System.out.println("ticMarkOffsetFromPivotPoint: " + m.getTicMarkOffsetFromPivotPoint());

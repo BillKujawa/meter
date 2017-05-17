@@ -31,12 +31,8 @@ void setup() {
   m.setArcMinDegrees(0.0); // Zero (right side start)
   m.setArcMaxDegrees(360.0); // TWO_PI (right side end)
 
-  // The scaleLabels array size MUST match the alternateScaleLabels array length.
-  String[] scaleLabels = {"0.0", "1.0", "2.0", "3.0", "4.0", "5.0", "6.0", "7.0", "8.0"};
+  String[] scaleLabels = {"E", "SE", "S", "SW", "W", "NW", "N", "NE", "E"};
   m.setScaleLabels(scaleLabels);
-  String[] alternateScaleLabels = {"E", "SE", "S", "SW", "W", "NW", "N", "NE", "E"};
-  m.setAlternateScaleLabels(alternateScaleLabels);
-  m.setDisplayAlternateScaleLabels(true);
   m.setDisplayLastScaleLabel(false);
   
   // Change the title from the default "Voltage" to a more meaningful label.

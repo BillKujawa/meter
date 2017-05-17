@@ -36,6 +36,9 @@ void setup() {
   // Define where the scale labele will appear
   m.setArcMinDegrees(90.0); // (start)
   m.setArcMaxDegrees(360.0); // ( end)
+  // Set the meter values to correspond to the sensor readings.
+  m.setMinScaleValue(0);
+  m.setMaxScaleValue(255);
 
   String[] scaleLabels = {"0", "10", "20", "30", "40", "50", "60", "70", "80"};
   m.setScaleLabels(scaleLabels);

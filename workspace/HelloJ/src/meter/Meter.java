@@ -86,7 +86,8 @@ public class Meter {
 	private int maxInputSignal;
 	private double arcMinDegrees;
 	private double arcMaxDegrees;
-	private int shortTicsBetweenLongTics;
+	private float minScaleValue;
+	private float maxScaleValue;
 
 	// An arc drawn inside scale values
 	// Distance set from Pivot Point
@@ -104,11 +105,10 @@ public class Meter {
 	// Set to false to prevent last label overwriting first label
 	private boolean displayLastScaleLabel;
 	private String[] scaleLabels;
-	// For displaying non-numeric scale labels
-	private boolean displayAlternateScaleLabels;
-	private String[] alternateScaleLabels;
 
 	// The tic marks for indicating the values.
+	private int longTicMarkCount;
+	private int shortTicsBetweenLongTics;
 	private int longTicMarkLength;
 	private int shortTicMarkLength;
 	private int ticMarkOffsetFromPivotPoint;
@@ -234,9 +234,10 @@ public class Meter {
 		setDisplayLastScaleLabel(true);
 		String[] scaleLabels = { "0.0", "1.0", "2.0", "3.0", "4.0", "5.0" };
 		setScaleLabels(scaleLabels);
-		setDisplayAlternateScaleLabels(false);
-		String[] alternateScaleLabels = null;
+		setMinScaleValue(0.0f);
+		setMaxScaleValue(5.0f);
 
+		setLongTicMarkCount(scaleLabels.length);
 		setLongTicMarkLength(25);
 		setShortTicMarkLength(14);
 		setShortTicsBetweenLongTics(4);
@@ -266,9 +267,11 @@ public class Meter {
 		setHighSensorWarningArcColor(p.color(255, 70, 0));
 	}
 
+	/*
 	// Process new sensor reading to the meter value
 	// Redraw only what is necessary, typically the meter needle
 	// and associated changed text or warning messages.
+	 */
 	public void updateMeter(int newSensorReading) {
 		if (newSensorReading < minInputSignal) {
 			String errorMessage = "New sensor reading (" + newSensorReading + ") < " + 
@@ -284,9 +287,11 @@ public class Meter {
 		updateMeterReading(newSensorReading);
 		drawMeterNeedle();
 
+		/*
 		// Display previously constructed images
 		// if only the sensor value changes (where the meter points)
 		// just redraw the things that changed
+		 */
 		if (meterChanged == true) {
 			drawMeterFrame();
 			drawMeterTitle();
@@ -859,9 +864,41 @@ public class Meter {
 	public int getMaxInputSignal() {
 		return maxInputSignal;
 	}
+	
+	/**
+	 * This is the minimum meter reading.
+	 * For numeric scale labels, it would be the first value.
+	 * This allows for non-numeric labels.
+	 * It corresponds to the minInputSignal.
+	 */
+	public void setMinScaleValue(float minValue) {
+		minScaleValue = minValue;
+		meterChanged = true;
+	}
+	
+	public float getMinScaleValue() {
+		return minScaleValue;
+	}
+	
+	/**
+	 * This is the maximum meter reading.
+	 * For numeric scale labels, it would be the last value.
+	 * This allows for non-numeric labels.
+	 * It corresponds to the maxInputSignal.
+	 */
+	public void setMaxScaleValue(float maxValue) {
+		maxScaleValue = maxValue;
+		meterChanged = true;
+	}
+	
+	public float getMaxScaleValue() {
+		return maxScaleValue;
+	}
 
+	/**
 	// The arc color when no low or high warnings are enabled
 	// Note: should be the middle arc color.
+	 */
 	public void setArcColor(int aColor) {
 		arcColor = aColor;
 		meterChanged = true;
@@ -944,27 +981,25 @@ public class Meter {
 		mArc.stroke(arcColor);
 		mArc.fill(255, 0);
 		if (lowSensorWarningActive == true || highSensorWarningActive == true) {
-			float maxScale = Float.parseFloat(scaleLabels[scaleLabels.length - 1]);
-			float minScale = Float.parseFloat(scaleLabels[0]);
 			float lowWarningValue;
-			if (lowSensorWarningValue > minScale) {
+			if (lowSensorWarningValue > minScaleValue) {
 				lowWarningValue = lowSensorWarningValue;
 			} else {
-				lowWarningValue = minScale;
+				lowWarningValue = minScaleValue;
 			}
-			float lowWarningPosition = PApplet.map(lowWarningValue, minScale, maxScale,
+			float lowWarningPosition = PApplet.map(lowWarningValue, minScaleValue, maxScaleValue,
 					PApplet.radians((float) arcMinDegrees), 
 					PApplet.radians((float) arcMaxDegrees));
 			mArc.stroke(lowSensorWarningArcColor);
 			mArc.arc(pivotPointX, pivotPointY, arcPositionOffset * 2, arcPositionOffset * 2,
 					PApplet.radians((float) arcMinDegrees), lowWarningPosition, PConstants.OPEN);
 			float highWarningValue;
-			if (highSensorWarningValue < maxScale) {
+			if (highSensorWarningValue < maxScaleValue) {
 				highWarningValue = highSensorWarningValue;
 			} else {
-				highWarningValue = maxScale;
+				highWarningValue = maxScaleValue;
 			}
-			float highWarningPosition = PApplet.map(highWarningValue, minScale, maxScale,
+			float highWarningPosition = PApplet.map(highWarningValue, minScaleValue, maxScaleValue,
 					PApplet.radians((float) arcMinDegrees), 
 					PApplet.radians((float) arcMaxDegrees));
 			mArc.stroke(midSensorWarningArcColor);
@@ -1028,39 +1063,6 @@ public class Meter {
 	}
 
 	/**
-	 * Display these instead of numeric labels.
-	 *
-	 * @param displayAlternateLabels
-	 */
-	public void setDisplayAlternateScaleLabels(boolean displayAlternateLabels) {
-		displayAlternateScaleLabels = displayAlternateLabels;
-		meterChanged = true;
-	}
-
-	public boolean getDisplayAlternateScaleLabesl() {
-		return displayAlternateScaleLabels;
-	}
-
-	/**
-	 * These can be any text
-	 * 
-	 * @param labels
-	 */
-	public void setAlternateScaleLabels(String[] labels) {
-		if (labels.length == scaleLabels.length) {
-			alternateScaleLabels = labels;
-			meterChanged = true;
-		} else {
-			String errorMessage = "alternateScaleLabels length != scaleLabels length.";
-			displayErrorMessage(errorMessage);
-		}
-	}
-
-	public String[] getAlternateScaleLabels() {
-		return alternateScaleLabels;
-	}
-
-	/**
 	 * The arc length of the scale labels from the pivot point.
 	 * 
 	 * @param scaleOffset
@@ -1089,41 +1091,27 @@ public class Meter {
 		return displayLastScaleLabel;
 	}
 
+	/*
 	// Draw the labels and try to position them correctly.
 	// Note: long labels would require the adjustment of the arc to
 	// provide extra spacing.
+	 */
 	private void drawMeterScaleLabels() {
 		float labelX;
 		float labelY;
-		String[] useLabels = null;
+		int labelCount = scaleLabels.length;
 		double currentTicRadians = PApplet.radians((float) arcMinDegrees);
 		double ticSeparation = (PApplet.radians((float) arcMaxDegrees) - 
 				PApplet.radians((float) arcMinDegrees))
-				/ (scaleLabels.length - 1);
-		// Determine which scale array to use.
-		if (displayAlternateScaleLabels == true) {
-			if (alternateScaleLabels != null) {
-				useLabels = (String[]) Arrays.copyOf(alternateScaleLabels, alternateScaleLabels.length);
-	//			useLabels = alternateScaleLabels.clone();
-			} else {
-				String errorMessage = "alternateScaleLabels undefined, using scaleLabels.";
-				displayErrorMessage(errorMessage);
-				useLabels = (String[]) Arrays.copyOf(scaleLabels, scaleLabels.length);
-	//			useLabels = scaleLabels.clone();
-			}
-		} else {
-			useLabels = (String[]) Arrays.copyOf(scaleLabels, scaleLabels.length);
-	//		useLabels = scaleLabels.clone();
-		}
-		int labelLength = useLabels.length;
+				/ (labelCount - 1);
 		mLabels = p.createGraphics(p.width, p.height);
 		mLabels.beginDraw();
 		mLabels.textFont(meterScaleFont);
 		mLabels.textSize(meterScaleFontSize);
 		mLabels.fill(meterScaleFontColor);
 		mLabels.textAlign(PConstants.CENTER);
-		for (int i = 0; i < labelLength; i++) {
-			if (displayLastScaleLabel == false && i == labelLength - 1) {
+		for (int i = 0; i < labelCount; i++) {
+			if (displayLastScaleLabel == false && i == longTicMarkCount - 1) {
 				continue;
 			}
 			labelX = pivotPointX + (PApplet.cos((float) currentTicRadians) * 
@@ -1131,12 +1119,25 @@ public class Meter {
 			labelY = pivotPointY + PApplet.sin((float) currentTicRadians) * 
 					meterScaleOffsetFromPivotPoint +
 					(p.textAscent() + p.textDescent()) / 2;
-			mLabels.text(useLabels[i], labelX, labelY);
+			mLabels.text(scaleLabels[i], labelX, labelY);
 			currentTicRadians += ticSeparation;
 		}
 		mLabels.endDraw();
 	}
 
+	/**
+	 * Set the number of long tic marks if different
+	 * from the number of scale labels.
+	 */
+	private void setLongTicMarkCount(int longTicCount) {
+		longTicMarkCount = longTicCount;
+		meterChanged = true;
+	}
+	
+	public int getLongTicMarkCount() {
+		return longTicMarkCount;
+	}
+	
 	public void setLongTicMarkLength(int longTicLength) {
 		if (longTicLength < shortTicMarkLength) {
 			String errorMessage = "Long tic mark length )" + longTicLength + 
@@ -1259,11 +1260,9 @@ public class Meter {
 	public void updateMeterReading(int newSensorReading) {
 		// Determine needle position relative to meter scale
 		// Use the first and last values from the scaleLabels array
-		float maxScale = Float.parseFloat(scaleLabels[scaleLabels.length - 1]);
-		float minScale = Float.parseFloat(scaleLabels[0]);
 		newSensorValue = PApplet.map((float) newSensorReading, (float) minInputSignal, 
-				(float) maxInputSignal, minScale, maxScale);
-		newMeterPosition = PApplet.map(newSensorValue, minScale, maxScale, 
+				(float) maxInputSignal, minScaleValue, maxScaleValue);
+		newMeterPosition = PApplet.map(newSensorValue, minScaleValue, maxScaleValue, 
 				PApplet.radians((float) arcMinDegrees), 
 				PApplet.radians((float) arcMaxDegrees));
 	}
