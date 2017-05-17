@@ -34,8 +34,8 @@ void setup() {
   m.setMeterTitleYOffset(24);  // default is 12 pixels
 
   // Define where the scale labele will appear
-  m.setMinArcDegrees(90.0); // (start)
-  m.setMaxArcDegrees(360.0); // ( end)
+  m.setArcMinDegrees(90.0); // (start)
+  m.setArcMaxDegrees(360.0); // ( end)
 
   String[] scaleLabels = {"0", "10", "20", "30", "40", "50", "60", "70", "80"};
   m.setScaleLabels(scaleLabels);
@@ -43,9 +43,8 @@ void setup() {
   // Change the title from the default "Voltage" to a more meaningful label.
   m.setMeterTitle("Rainbow");
 
-  // Display only the digital sensor values input.
-  m.setInformationAreaText("Sensor: % 4d");
-  m.setDisplayDigitalSensorValues(true);
+  // Display the digital meter value.
+  m.setDisplayDigitalMeterValue(true);
 }
 
 void draw() {

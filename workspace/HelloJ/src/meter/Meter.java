@@ -1181,16 +1181,7 @@ public class Meter {
 	public int getShortTicsBetweenLongTics() {
 		return shortTicsBetweenLongTics;
 	}
-/*
-	public void setTicMarkSetbackFromArc(int ticSetback) {
-		ticMarkSetbackFromArc = scale(ticSetback);
-		meterChanged = true;
-	}
 
-	public int getTicMarkSetbackFromArc() {
-		return ticMarkSetbackFromArc;
-	}
-*/
 	public void setTicMarkThickness(int ticMarkThickness) {
 		this.ticMarkThickness = scale(ticMarkThickness);
 		meterChanged = true;

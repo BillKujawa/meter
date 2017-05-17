@@ -1,7 +1,7 @@
 /* //<>//
  Change the meter size by changing the width.
- The meter will randomly resize itself.
- Just rerun this sketch.
+ The meter will randomly resize itself each time this 
+ sketch is executed.  Just rerun this sketch.
  Note: Change the size as the first change after creating
    the meter. Changing the size depends upon the default 
    meter settings. Make any other change after this.
@@ -26,8 +26,8 @@ void setup() {
 
   // Set a new meter width. Refun the sketch to show different sizes.
   m.setMeterWidth((int)random(50, 700));
-    // Display digital sensor values.
-  m.setDisplayDigitalSensorValues(true);
+    // Display digital meter value.
+  m.setDisplayDigitalMeterValue(true);
 }
 
 void draw() {

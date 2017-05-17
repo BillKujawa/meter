@@ -25,11 +25,11 @@ void setup() {
   m = new Meter(this, 125, 25, true); // Instantiate a full circle meter class.
 
   // Define where the scale labele will appear
-  m.setMinArcDegrees(0.0); // Zero (right side start)
-  m.setMaxArcDegrees(360.0); // TWO_PI (right side end)
+  m.setArcMinDegrees(0.0); // Zero (right side start)
+  m.setArcMaxDegrees(360.0); // TWO_PI (right side end)
   m.setDisplayLastScaleLabel(false);
-  // Display digital sensor values.
-  m.setDisplayDigitalSensorValues(true);
+  // Display digital meter value.
+  m.setDisplayDigitalMeterValue(true);
 }
 
 void draw() {

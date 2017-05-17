@@ -18,8 +18,8 @@ void setup() {
 
   m = new Meter(this, 125, 25); // Instantiate a meter class.
 
-  // Display digital sensor values.
-  m.setDisplayDigitalSensorValues(true);
+  // Display digital meter value.
+  m.setDisplayDigitalMeterValue(true);
 }
 
 void draw() {

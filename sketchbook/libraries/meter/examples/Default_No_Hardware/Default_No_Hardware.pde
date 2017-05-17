@@ -11,7 +11,9 @@ void setup() {
   background(255, 255, 200);
 
   m = new Meter(this, 50, 25);
-  m.updateMeter(0); // Display meter with zero input sensor value.
+  // Display meter with zero input sensor value.
+  // Can ommit this in setup().
+  m.updateMeter(0);
 }
 
 void draw() {

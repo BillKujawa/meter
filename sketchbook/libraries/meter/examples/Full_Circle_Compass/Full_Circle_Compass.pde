@@ -28,8 +28,8 @@ void setup() {
   m = new Meter(this, 125, 25, true); // Instantiate a full circle meter class.
 
   // Define where the scale labele will appear
-  m.setMinArcDegrees(0.0); // Zero (right side start)
-  m.setMaxArcDegrees(360.0); // TWO_PI (right side end)
+  m.setArcMinDegrees(0.0); // Zero (right side start)
+  m.setArcMaxDegrees(360.0); // TWO_PI (right side end)
 
   // The scaleLabels array size MUST match the alternateScaleLabels array length.
   String[] scaleLabels = {"0.0", "1.0", "2.0", "3.0", "4.0", "5.0", "6.0", "7.0", "8.0"};
@@ -41,11 +41,6 @@ void setup() {
   
   // Change the title from the default "Voltage" to a more meaningful label.
   m.setMeterTitle("Direction");
-
-  // Display digital sensor values. While this will correctly indicate the input sensor value,
-  // it will try to show a voltage value. Change the informationAreaText appropriately.
-  m.setInformationAreaText("Sensor: % 4d");
-  m.setDisplayDigitalSensorValues(true);
 }
 
 void draw() {

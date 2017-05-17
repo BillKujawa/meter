@@ -43,6 +43,7 @@ void setup() {
   m.setMeterWidth(400);
   m.setMeterFrameThickness(10);
   m.setMeterFrameColor(color(245, 10, 14));
+  m.setMeterFrameStyle(PConstants.MITER);
 
   m.setMeterTitleFontSize(34);
   m.setMeterTitleFontName("Arial Bold Italic");

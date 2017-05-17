@@ -27,6 +27,7 @@ void setup() {
   System.out.println("meterFrameThickness: " + m.getMeterFrameThickness());
   System.out.println("meterFrameColor: " + (int)red(m.getMeterFrameColor()) + ", " + 
       (int)green(m.getMeterFrameColor()) + ", " + (int)blue(m.getMeterFrameColor()));
+  System.out.println("meterFrameStyle: " + m.getMeterFrameStyle());
   System.out.println("informationAreaFontSize: " + m.getInformationAreaFontSize());
   System.out.println("informationAreaTextYOffset: " + m.getInformationAreaTextYOffset());
   System.out.println("informationAreaFontName: " + m.getInformationAreaFontName());
