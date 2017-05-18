@@ -107,7 +107,6 @@ public class Meter {
 	private String[] scaleLabels;
 
 	// The tic marks for indicating the values.
-	private int longTicMarkCount;
 	private int shortTicsBetweenLongTics;
 	private int longTicMarkLength;
 	private int shortTicMarkLength;
@@ -237,7 +236,6 @@ public class Meter {
 		setMinScaleValue(0.0f);
 		setMaxScaleValue(5.0f);
 
-		setLongTicMarkCount(scaleLabels.length);
 		setLongTicMarkLength(25);
 		setShortTicMarkLength(14);
 		setShortTicsBetweenLongTics(4);
@@ -1111,7 +1109,8 @@ public class Meter {
 		mLabels.fill(meterScaleFontColor);
 		mLabels.textAlign(PConstants.CENTER);
 		for (int i = 0; i < labelCount; i++) {
-			if (displayLastScaleLabel == false && i == longTicMarkCount - 1) {
+	//		if (displayLastScaleLabel == false && i == longTicMarkCount - 1) {
+			if (displayLastScaleLabel == false && i == labelCount - 1) {
 				continue;
 			}
 			labelX = pivotPointX + (PApplet.cos((float) currentTicRadians) * 
@@ -1125,19 +1124,6 @@ public class Meter {
 		mLabels.endDraw();
 	}
 
-	/**
-	 * Set the number of long tic marks if different
-	 * from the number of scale labels.
-	 */
-	private void setLongTicMarkCount(int longTicCount) {
-		longTicMarkCount = longTicCount;
-		meterChanged = true;
-	}
-	
-	public int getLongTicMarkCount() {
-		return longTicMarkCount;
-	}
-	
 	public void setLongTicMarkLength(int longTicLength) {
 		if (longTicLength < shortTicMarkLength) {
 			String errorMessage = "Long tic mark length )" + longTicLength + 
