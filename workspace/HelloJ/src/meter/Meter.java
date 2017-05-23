@@ -53,6 +53,8 @@ public class Meter {
 	// Flag to redraw everything the first time or when anything changes,
 	// else just use images of previously drawn meter parts.
 	private boolean meterChanged = true;
+	// Flag to control the display of warning messages.
+	private boolean displayWarningMessages;
 
 	// The meter frame.
 	private int meterFrameThickness;
@@ -88,6 +90,15 @@ public class Meter {
 	private double arcMaxDegrees;
 	private float minScaleValue;
 	private float maxScaleValue;
+	
+	// Notify the user if the input signal is out of range.
+	private boolean enableInputSignalOutOfRange;
+	private String inputSignalOutOfRangeFontName;
+	private PFont inputSignalOutOfRangeFont;
+	private int inputSignalOutOfRangeFontColor;
+	private int inputSignalOutOfRangeFontSize;
+	private String inputSignalOutOfRangeText;
+	private int inputSignalOutOfRangeTextYOffset;
 
 	// An arc drawn inside scale values
 	// Distance set from Pivot Point
@@ -198,6 +209,7 @@ public class Meter {
 	// to be able to recalculate using the new scaleFactor.
 	// Note: changing the order can cause interesting and unwanted results.
 	private void initializeDefaultValues() {
+		setDisplayWarningMessages(true);
 		setMeterFrameColor(p.color(0, 0, 0));
 		setMeterFrameStyle(PConstants.BEVEL);
 
@@ -218,6 +230,13 @@ public class Meter {
 
 		setMinInputSignal(0);
 		setMaxInputSignal(255);
+		
+		setEnableInputSignalOutOfRange(true);
+		setInputSignalOutOfRangeFontSize(16);
+		setInputSignalOutOfRangeFongName("Liberation Sans Bold");
+		setInputSignalOutOfRangeFontColor(p.color(255, 0, 0));
+		setInputSignalOutOfRangeText("InputSignal\n  Out-Of-Range");
+		setInputSignalOutOfRangeTextYOffset(100);
 
 		setDisplayArc(true);
 		setArcPositionOffset(150);
@@ -341,8 +360,18 @@ public class Meter {
 	 * Standardize warning messages.
 	 */
 	private void displayErrorMessage(String errorMessage) {
+		if (displayWarningMessages == true) {
 		String msg = "Meter error: " + errorMessage;
 		System.err.println(msg);
+		}
+	}
+	
+	public void setDisplayWarningMessages(boolean displayWarningMessages) {
+		this.displayWarningMessages = displayWarningMessages; 
+	}
+	
+	public boolean getDisplayWarningMessages() {
+		return displayWarningMessages;
 	}
 
 	/*
@@ -864,6 +893,67 @@ public class Meter {
 	}
 	
 	/**
+	 * Disable the input signal out-of-range warning.
+	 * 
+	 * @param disableOutOfRange
+	 */
+	public void setEnableInputSignalOutOfRange(boolean enableOutOfRange) {
+		enableInputSignalOutOfRange = enableOutOfRange;
+		meterChanged = true;
+	}
+	
+	public boolean getEnableInputSignalOutOfRange() {
+		return enableInputSignalOutOfRange;
+	}
+	
+	public void setInputSignalOutOfRangeFongName(String outOfRangeFontName) {
+		inputSignalOutOfRangeFontName = outOfRangeFontName;
+		inputSignalOutOfRangeFont = p.createFont(inputSignalOutOfRangeFontName, 
+				inputSignalOutOfRangeFontSize);
+		meterChanged = true;
+	}
+	
+	public String getInputSignalOutOfRangeFontName() {
+		return inputSignalOutOfRangeFontName;
+	}
+	
+	public void setInputSignalOutOfRangeFontColor(int outOfRangeFontColor) {
+		inputSignalOutOfRangeFontColor = outOfRangeFontColor;
+		meterChanged = true;
+	}
+	
+	public int getInputSignalOutOfRangeFontColor() {
+		return inputSignalOutOfRangeFontColor;
+	}
+	
+	public void setInputSignalOutOfRangeFontSize(int outOfRangeFontSize) {
+		inputSignalOutOfRangeFontSize = outOfRangeFontSize;
+		meterChanged = true;
+	}
+	
+	public int getInputSignalOutOfRangeFontSize() {
+		return inputSignalOutOfRangeFontSize;
+	}
+	
+	public void setInputSignalOutOfRangeText(String outOfRangeText) {
+		inputSignalOutOfRangeText = outOfRangeText;
+		meterChanged = true;
+	}
+	
+	public String getInputSignalOutOfRangeText() {
+		return inputSignalOutOfRangeText;
+	}
+	
+	public void setInputSignalOutOfRangeTextYOffset(int outOfRangeTextYOffset) {
+		inputSignalOutOfRangeTextYOffset = outOfRangeTextYOffset;
+		meterChanged = true;
+	}
+	
+	public int getInputSignalOutOfRangeTextYOffset() {
+		return inputSignalOutOfRangeTextYOffset;
+	}
+
+	/**
 	 * This is the minimum meter reading.
 	 * For numeric scale labels, it would be the first value.
 	 * This allows for non-numeric labels.
@@ -1284,7 +1374,8 @@ public class Meter {
 
 	// Draw the needle at its new position.
 	// Display sensor values if enabled.
-	// Display warning messages if enabled.
+	// Display low or high sensor warning messages if enabled.
+	// Display warning message if input signal is out-of-range.
 	private void drawMeterNeedle() {
 		float needleX = pivotPointX + (PApplet.cos(newMeterPosition) * needleLength);
 		float needleY = pivotPointY + PApplet.sin(newMeterPosition) * needleLength;
@@ -1325,6 +1416,16 @@ public class Meter {
 				mNeedle.text(sensorWarningHighText + "  ", meterX + meterWidth - meterFrameThickness,
 						meterY + p.textAscent() + meterFrameThickness + 
 						sensorWarningTextYOffset);
+			}
+		}
+		if (enableInputSignalOutOfRange == true) {
+			if (newSensorReading < minInputSignal || newSensorReading > maxInputSignal) {
+				mNeedle.textFont(inputSignalOutOfRangeFont);
+				mNeedle.fill(inputSignalOutOfRangeFontColor);
+				mNeedle.textSize(inputSignalOutOfRangeFontSize);
+				mNeedle.textAlign(PConstants.CENTER);
+				mNeedle.text(inputSignalOutOfRangeText + "  ", meterX + (meterWidth / 2),
+					meterY + meterHeight - inputSignalOutOfRangeTextYOffset);
 			}
 		}
 		mNeedle.endDraw();
