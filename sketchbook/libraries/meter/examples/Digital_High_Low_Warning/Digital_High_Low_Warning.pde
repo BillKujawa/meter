@@ -1,5 +1,5 @@
 /* //<>//
- Add Digital values and High and Low Warnings.
+ Display the digital meter value and High and Low Warnings.
  Non-Hardware example.
  
  created April 19, 2017
@@ -17,8 +17,6 @@ void setup() {
   background(255, 255, 200);
 
   m = new Meter(this, 125, 25); // Instantiate a meter class.
-
-  // Display digital meter value.
   m.setDisplayDigitalMeterValue(true);
 }
 
@@ -26,6 +24,7 @@ void draw() {
 
   // Simulate sensor data.
   int newSensorReading;
+  // Use the default min and max input signal values for testing.
   newSensorReading = (int)random(0, 255);
   // Set a warning if sensor value is too low.
   m.setLowSensorWarningActive(true);

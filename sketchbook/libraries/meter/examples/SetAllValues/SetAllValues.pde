@@ -1,19 +1,9 @@
 /* //<>//
  Meter as a partial circle.
  Change all default values.
+ Some values are changed in draw().
  Note that the circle starts at 90 degrees (6:00 OClock) and
  moves clockwise. The scale labels have to be in this order.
- 
- Notes:
- Adjust sensor value display to frame thickness? (test was 40)
- How to adjust percentage value based on inside frame thickness?
- Set a secondary adjustment for arc values?
- Allow access to HEIGHTTOWIDTHRATIOFULLCIRCLE?
- Allow access to HEIGHTTOWIDTHRATIOHALFCIRCLE?
- Allow access to PIVOTPOINTRATIO?
- 
- Change interface or just add another method: getCurrentMeterValue
- 
  
  Non-Hardware example.
  
@@ -38,7 +28,7 @@ void setup() {
   printArray(fontList);
 
   // Display a full circle meter frame.
-  m = new Meter(this, 125, 25, true); // Instantiate a full circle meter class.
+  m = new Meter(this, 125, 25, true);
 
   m.setMeterWidth(400);
   m.setMeterFrameThickness(10);
@@ -90,6 +80,7 @@ void setup() {
   m.setInformationAreaFontColor(color(32, 173, 227));
 
   // Pivot Point
+  // Note that meterPivotPointX and meterPivotPointY are not settable.
   m.setMeterPivotPointSize(20);
   m.setMeterPivotPointColor(color(62, 211, 140));
 
@@ -112,6 +103,17 @@ void setup() {
   m.setLowSensorWarningArcColor(color(250, 255, 3));
   m.setMidSensorWarningArcColor(color(240, 240, 240));
   m.setHighSensorWarningArcColor(color(45, 187, 237));
+
+  // Display warning messages to output
+  m.setDisplayWarningMessagesToOutput(true);
+
+  // Warn if the input signal to the meter is out-of-range.
+  m.setEnableInputSignalOutOfRange(true);
+  m.setInputSignalOutOfRangeFontName("URW Palladio L Italic");
+  m.setInputSignalOutOfRangeFontColor(color(175, 80, 80));
+  m.setInputSignalOutOfRangeFontSize(30);
+  m.setInputSignalOutOfRangeText("Woops\nMy Bad");
+  m.setInputSignalOutOfRangeTextFromPivotPoint(-40);
 }
 
 void draw() {
@@ -121,9 +123,11 @@ void draw() {
     m.setDisplayArc(false);
     m.setDisplayLastScaleLabel(false);
     m.setLowSensorWarningActive(false);
+    m.setEnableInputSignalOutOfRange(false);
   }
   if (i==8) {
     m.setHighSensorWarningActive(false);
+    m.setDisplayWarningMessagesToOutput(false);
   }
   if (i == 10) {
     m.setDisplayArc(true);
@@ -133,9 +137,11 @@ void draw() {
   }
   if (i==14) {
     m.setHighSensorWarningActive(true);
+    m.setEnableInputSignalOutOfRange(true);
   }
   if (i == 16) {
     m.setDisplayLastScaleLabel(true);
+    m.setDisplayWarningMessagesToOutput(true);
   }
   if (i > 20) {
     i = 0;
@@ -143,7 +149,7 @@ void draw() {
 
   // Simulate sensor data.
   int newSensorReading;
-  newSensorReading = (int)random(0, 255);
+  newSensorReading = (int)random(-10, 265);
 
   // Display the new sensor value.
   m.updateMeter(newSensorReading);

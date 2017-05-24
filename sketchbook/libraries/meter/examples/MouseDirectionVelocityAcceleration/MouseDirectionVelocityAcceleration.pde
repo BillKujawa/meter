@@ -34,7 +34,7 @@ void setup() {
   m.setMinScaleValue(0.0f);
   m.setMaxScaleValue(360.0f);
   m.setMaxInputSignal(360);
-  m.setDisplayWarningMessages(false);
+  m.setDisplayWarningMessagesToOutput(false);
   m.setArcMaxDegrees(360);
   m.setArcMinDegrees(0);
   m.setDisplayLastScaleLabel(false);

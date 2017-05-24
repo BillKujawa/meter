@@ -2,10 +2,10 @@
  Meter as a full circle.
  Note that the circle starts at 0 degrees (3:00 OClock) and
  moves clockwise. The scale labels have to be in this order.
-Demonstrate not displaying the last scale label,
-typically used with a 360 degree meter to prevent the
-last scale label from over writing the first one.
-
+ Demonstrate not displaying the last scale label,
+ typically used with a 360 degree meter to prevent the
+ last scale label from over writing the first one.
+ 
  Non-Hardware example.
  
  created May 17, 2017
@@ -26,7 +26,7 @@ void setup() {
 
   // Display a full circle meter frame.
   m = new Meter(this, 125, 25, true); // Instantiate a full circle meter class.
-
+  // Setting the meter width should be the first change.
   m.setMeterWidth(400);
 
   // Input signal range
@@ -34,7 +34,6 @@ void setup() {
   m.setMaxInputSignal(255);
 
   // Arc settings
-//  m.setArcPositionOffset(140);
   // Define where the scale labels will appear
   m.setArcMinDegrees(00.0); // (start)
   m.setArcMaxDegrees(360.0); // ( end)
@@ -65,5 +64,6 @@ void draw() {
 
   // Display the new sensor value.
   m.updateMeter(newSensorReading);
-  delay(1000); // Allow time to see the change.
+  // Allow time to see the change.
+  delay(1000);
 }

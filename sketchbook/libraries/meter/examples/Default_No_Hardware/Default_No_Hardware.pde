@@ -5,20 +5,24 @@
 import meter.*;
 
 Meter m;
+int sensorValue;
+int minIn, maxIn;
 
 void setup() {
   size(600, 500);
   background(255, 255, 200);
 
   m = new Meter(this, 50, 25);
-  // Display meter with zero input sensor value.
-  // Can ommit this in setup().
-  m.updateMeter(0);
+  // Use the default values for testing, 0 - 255.
+  minIn = m.getMinInputSignal();
+  maxIn = m.getMaxInputSignal();
 }
 
 void draw() {
-  int sensorValue = 128;
+  // Input for testing.
+  sensorValue = (int)random(minIn, maxIn);
+  // Update the sensor value to the meter.
+  m.updateMeter(sensorValue);
+  // Use a delay to see the changes.
   delay(700);
-  //   sensorValue = (int)random(minIn, maxIn);  // Input for testing
-  m.updateMeter(sensorValue); // Update the sensor value to the meter.
 }

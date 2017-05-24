@@ -35,6 +35,7 @@ void setup() {
   // Set the meter value correspond to the scale labels.
   m.setMinScaleValue(0.0);
   m.setMaxScaleValue(80.0);
+  m.setInputSignalOutOfRangeFontColor(color(0, 255, 0));
 
   String[] scaleLabels = {"0", "10", "20", "30", "40", "50", "60", "70", "80"};
   m.setScaleLabels(scaleLabels);
@@ -42,7 +43,7 @@ void setup() {
   // Change the title from the default "Voltage" to a more meaningful label.
   m.setMeterTitle("Rainbow");
 
-  // Display only the digital meter value.
+  // Display the digital meter value.
   m.setDisplayDigitalMeterValue(true);
 }
 
@@ -50,8 +51,9 @@ void draw() {
 
   // Simulate sensor data.
   int newSensorReading;
-  newSensorReading = (int)random(0, 255);
-
+  // Force inputSignalOutOfRange of 0 - 255.
+  newSensorReading = (int)random(-10, 265);
+ 
   // Display the new sensor value.
   m.updateMeter(newSensorReading);
   delay(1000); // Allow time to see the change.

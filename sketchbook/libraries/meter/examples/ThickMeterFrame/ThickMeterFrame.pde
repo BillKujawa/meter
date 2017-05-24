@@ -4,7 +4,7 @@
  and the tic mark offset to have them fit in the smaller
  meter interior.
  With the thick frame, the information area happens to be 
- part of the frame, change the font color.
+ part of the frame, change the font color if necessary.
  Change the style of the frame corners:
  PConstants.MITER (8), PConstants.BEVEL (32), PConstants.ROUND (2).
  
@@ -56,7 +56,7 @@ void setup() {
 
 public void draw() {
   int newSensorReading = 120;
-  newSensorReading = (int)random(0, 255);
+  newSensorReading = (int)random(-10, 265);
 
   m.updateMeter(newSensorReading);
   m2.updateMeter(newSensorReading);

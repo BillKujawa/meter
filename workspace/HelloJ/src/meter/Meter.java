@@ -54,7 +54,7 @@ public class Meter {
 	// else just use images of previously drawn meter parts.
 	private boolean meterChanged = true;
 	// Flag to control the display of warning messages.
-	private boolean displayWarningMessages;
+	private boolean displayWarningMessagesToOutput;
 
 	// The meter frame.
 	private int meterFrameThickness;
@@ -98,7 +98,7 @@ public class Meter {
 	private int inputSignalOutOfRangeFontColor;
 	private int inputSignalOutOfRangeFontSize;
 	private String inputSignalOutOfRangeText;
-	private int inputSignalOutOfRangeTextYOffset;
+	private int inputSignalOutOfRangeTextFromPivotPoint;
 
 	// An arc drawn inside scale values
 	// Distance set from Pivot Point
@@ -209,7 +209,7 @@ public class Meter {
 	// to be able to recalculate using the new scaleFactor.
 	// Note: changing the order can cause interesting and unwanted results.
 	private void initializeDefaultValues() {
-		setDisplayWarningMessages(true);
+		setDisplayWarningMessagesToOutput(true);
 		setMeterFrameColor(p.color(0, 0, 0));
 		setMeterFrameStyle(PConstants.BEVEL);
 
@@ -233,10 +233,10 @@ public class Meter {
 		
 		setEnableInputSignalOutOfRange(true);
 		setInputSignalOutOfRangeFontSize(16);
-		setInputSignalOutOfRangeFongName("Liberation Sans Bold");
+		setInputSignalOutOfRangeFontName("Liberation Sans Bold");
 		setInputSignalOutOfRangeFontColor(p.color(255, 0, 0));
 		setInputSignalOutOfRangeText("InputSignal\n  Out-Of-Range");
-		setInputSignalOutOfRangeTextYOffset(100);
+		setInputSignalOutOfRangeTextFromPivotPoint(60);
 
 		setDisplayArc(true);
 		setArcPositionOffset(150);
@@ -360,18 +360,18 @@ public class Meter {
 	 * Standardize warning messages.
 	 */
 	private void displayErrorMessage(String errorMessage) {
-		if (displayWarningMessages == true) {
+		if (displayWarningMessagesToOutput == true) {
 		String msg = "Meter error: " + errorMessage;
 		System.err.println(msg);
 		}
 	}
 	
-	public void setDisplayWarningMessages(boolean displayWarningMessages) {
-		this.displayWarningMessages = displayWarningMessages; 
+	public void setDisplayWarningMessagesToOutput(boolean displayWarningMessages) {
+		displayWarningMessagesToOutput = displayWarningMessages; 
 	}
 	
-	public boolean getDisplayWarningMessages() {
-		return displayWarningMessages;
+	public boolean getDisplayWarningMessagesToOutput() {
+		return displayWarningMessagesToOutput;
 	}
 
 	/*
@@ -906,7 +906,7 @@ public class Meter {
 		return enableInputSignalOutOfRange;
 	}
 	
-	public void setInputSignalOutOfRangeFongName(String outOfRangeFontName) {
+	public void setInputSignalOutOfRangeFontName(String outOfRangeFontName) {
 		inputSignalOutOfRangeFontName = outOfRangeFontName;
 		inputSignalOutOfRangeFont = p.createFont(inputSignalOutOfRangeFontName, 
 				inputSignalOutOfRangeFontSize);
@@ -927,7 +927,7 @@ public class Meter {
 	}
 	
 	public void setInputSignalOutOfRangeFontSize(int outOfRangeFontSize) {
-		inputSignalOutOfRangeFontSize = outOfRangeFontSize;
+		inputSignalOutOfRangeFontSize = scale(outOfRangeFontSize);
 		meterChanged = true;
 	}
 	
@@ -944,13 +944,13 @@ public class Meter {
 		return inputSignalOutOfRangeText;
 	}
 	
-	public void setInputSignalOutOfRangeTextYOffset(int outOfRangeTextYOffset) {
-		inputSignalOutOfRangeTextYOffset = outOfRangeTextYOffset;
+	public void setInputSignalOutOfRangeTextFromPivotPoint(int outOfRangeTextOffset) {
+		inputSignalOutOfRangeTextFromPivotPoint = scale(outOfRangeTextOffset);
 		meterChanged = true;
 	}
 	
-	public int getInputSignalOutOfRangeTextYOffset() {
-		return inputSignalOutOfRangeTextYOffset;
+	public int getInputSignalOutOfRangeTextFromPivotPoint() {
+		return inputSignalOutOfRangeTextFromPivotPoint;
 	}
 
 	/**
@@ -1425,7 +1425,7 @@ public class Meter {
 				mNeedle.textSize(inputSignalOutOfRangeFontSize);
 				mNeedle.textAlign(PConstants.CENTER);
 				mNeedle.text(inputSignalOutOfRangeText + "  ", meterX + (meterWidth / 2),
-					meterY + meterHeight - inputSignalOutOfRangeTextYOffset);
+					pivotPointY - inputSignalOutOfRangeTextFromPivotPoint);
 			}
 		}
 		mNeedle.endDraw();
