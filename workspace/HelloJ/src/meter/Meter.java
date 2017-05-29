@@ -68,6 +68,7 @@ public class Meter {
 	private String informationAreaFontName;
 	private PFont informationAreaFont;
 	private int informationAreaFontColor;
+	// Display the meter values if displayMaximumMeterValue is false.
 	private boolean displayDigitalMeterValue;
 
 	// Display a title at the top of the meter.
@@ -130,7 +131,16 @@ public class Meter {
 	private int newSensorReading;
 	private float newSensorValue;
 	private float newMeterPosition;
-
+	
+	// Keep track of the maximum meter value and
+	// display it if displayDigitalMeterValue is false.
+	private boolean displayMaximumMeterValue;
+	private float maximumMeterValue;
+	private float maximumMeterPosition;
+	private int maximumNeedleLength;
+	private int maximumNeedleColor;
+	private int maximumNeedleThickness;
+	
 	// Set optional warning values
 	private boolean lowSensorWarningActive;
 	private boolean highSensorWarningActive;
@@ -264,8 +274,13 @@ public class Meter {
 
 		setNeedleLength(145);
 		setNeedleColor(p.color(255, 0, 0));
-		// Set the needle width
 		setNeedleThickness(1);
+		
+		setDisplayMaximumMeterValue(false);
+		setMaximumMeterValue(0.0f);
+		setMaximumNeedleLength(135);
+		setMaximumNeedleColor(p.color(230, 30, 230));
+		setMaximumNeedleThickness(1);
 
 		setLowSensorWarningActive(false);
 		setHighSensorWarningActive(false);
@@ -334,16 +349,58 @@ public class Meter {
 
 	/**
 	 * Enable display of Meter Value at bottom of meter.
+	 * May not be enabled if displayMaximumMeterValue is enabled.
 	 * 
 	 * @param displayMeterValue
 	 */
 	public void setDisplayDigitalMeterValue(boolean displayMeterValue) {
-		displayDigitalMeterValue = displayMeterValue;
-		meterChanged = true;
+		if (displayMeterValue == false || displayMaximumMeterValue == false) {
+			displayDigitalMeterValue = displayMeterValue;
+			meterChanged = true;
+		}
+		else {
+			String errorMessage = "displayMeterValue may not be enabled while " +
+					"displayMaximumMeterValue is enabled.";
+			displayErrorMessage(errorMessage);
+		}
 	}
 
 	public boolean getDisplayDigitalMeterValue() {
 		return displayDigitalMeterValue;
+	}
+	
+	/**
+	 * Enable display of Maximum Meter Value at bottom of meter.
+	 * May not be enabled if displayDigitalMeterValue is enabled.
+	 * 
+	 * @param displayMaximumValue
+	 */
+	public void setDisplayMaximumMeterValue(boolean displayMaximumValue) {
+		if (displayMaximumValue == false || displayDigitalMeterValue == false) {
+			displayMaximumMeterValue = displayMaximumValue;
+			meterChanged = true;
+		}
+		else {
+			String errorMessage = "displayMaximumValue may not be enabled while " +
+					"displayDigitalMeterValue is enabled.";
+			displayErrorMessage(errorMessage);
+		}
+	}
+
+	public boolean getDisplayMaximumMeterValue() {
+		return displayMaximumMeterValue;
+	}
+	
+	/**
+	 * Used to reset the maximum value or set a minimum value.
+	 * @param maxValue
+	 */
+	public void setMaximumMeterValue(float maxValue) {
+		maximumMeterValue = maxValue;
+	}
+	
+	public float getMaximumMeterValue() {
+		return maximumMeterValue;
 	}
 	
 	/**
@@ -895,7 +952,7 @@ public class Meter {
 	/**
 	 * Disable the input signal out-of-range warning.
 	 * 
-	 * @param disableOutOfRange
+	 * @param enableOutOfRange
 	 */
 	public void setEnableInputSignalOutOfRange(boolean enableOutOfRange) {
 		enableInputSignalOutOfRange = enableOutOfRange;
@@ -1330,6 +1387,7 @@ public class Meter {
 
 	/**
 	 * Determine meter value (needle position) relative to the sensor reading
+	 * Update the maximumMeterValue.
 	 * 
 	 * @param newSensorReading
 	 */
@@ -1341,7 +1399,12 @@ public class Meter {
 		newMeterPosition = PApplet.map(newSensorValue, minScaleValue, maxScaleValue, 
 				PApplet.radians((float) arcMinDegrees), 
 				PApplet.radians((float) arcMaxDegrees));
+		if (newSensorValue > maximumMeterValue) {
+			maximumMeterValue = newSensorValue;
+			maximumMeterPosition = newMeterPosition;
+		}
 	}
+
 
 	public void setNeedleLength(int length) {
 		needleLength = scale(length);
@@ -1371,9 +1434,51 @@ public class Meter {
 	public int getNeedleThickness() {
 		return needleThickness;
 	}
+	
+
+	/**
+	 * The length of the maximum meter value needle
+	 * 	
+	 * @param length
+	 */
+	public void setMaximumNeedleLength(int length) {
+		maximumNeedleLength = scale(length);
+	}
+
+	public int getMaximumNeedleLength() {
+		return maximumNeedleLength;
+	}
+
+	/**
+	 * The color of the maximum meter value needle
+	 * 
+	 * @param needleColor
+	 */
+	public void setMaximumNeedleColor(int needleColor) {
+		maximumNeedleColor = needleColor;
+	}
+
+	public int getMaximumNeedleColor() {
+		return maximumNeedleColor;
+	}
+
+	/**
+	 * The width of the maximum meter value needle
+	 * 
+	 * @param thickness
+	 */
+	public void setMaximumNeedleThickness(int thickness) {
+		maximumNeedleThickness = scale(thickness);
+	}
+
+	public int getMaximumNeedleThickness() {
+		return maximumNeedleThickness;
+	}
 
 	// Draw the needle at its new position.
+	// Draw the maximum needle at its current or new position.
 	// Display sensor values if enabled.
+	// Display maximum meter value if enabled.
 	// Display low or high sensor warning messages if enabled.
 	// Display warning message if input signal is out-of-range.
 	private void drawMeterNeedle() {
@@ -1385,6 +1490,15 @@ public class Meter {
 		mNeedle.stroke(needleColor);
 		mNeedle.strokeWeight(needleThickness);
 		mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
+		
+		// Draw maximum meter value needle if enabled
+		if (displayMaximumMeterValue == true) {
+			needleX = pivotPointX + (PApplet.cos(maximumMeterPosition) * maximumNeedleLength);
+			needleY = pivotPointY + PApplet.sin(maximumMeterPosition) * maximumNeedleLength;
+			mNeedle.stroke(maximumNeedleColor);
+			mNeedle.strokeWeight(maximumNeedleThickness);
+			mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
+		}
 
 		if (displayDigitalMeterValue == true) {
 			mNeedle.textFont(informationAreaFont);
@@ -1395,6 +1509,17 @@ public class Meter {
 			mNeedle.text(informationText, meterX + (meterWidth / 2), 
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
+		
+		if (displayMaximumMeterValue == true) {
+			mNeedle.textFont(informationAreaFont);
+			mNeedle.fill(maximumNeedleColor);
+			mNeedle.textAlign(PConstants.CENTER);
+			mNeedle.textSize(informationAreaFontSize);
+			informationText = Double.toString(Math.round(maximumMeterValue * 100.0) / 100.0);
+			mNeedle.text(informationText, meterX + (meterWidth / 2), 
+					meterY + meterHeight - informationAreaTextYOffset);
+		}
+
 
 		if (lowSensorWarningActive == true) {
 			if (lowSensorWarningValue >= newSensorValue) {
