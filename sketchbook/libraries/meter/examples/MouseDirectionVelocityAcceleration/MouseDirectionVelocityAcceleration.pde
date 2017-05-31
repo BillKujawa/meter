@@ -9,14 +9,15 @@
  and vertical line passing through it are for the
  Direction meter.
  
- ToDoList:
- Display the max velocity when movement stops.
- Do not save values if the mouse distance is zero.
- When the mouse stops moving, for more than 10?? times
- in a row, assume actions are finished and reset "i".
- Limit the total number of values recorded to 1000??
- and what to do in that case, reset "i" or just stop
- recording values? How to notify the user?
+ Move the mouse pointer about the center of the display
+ to have the meters resister the movement.
+ 
+ Please excuse any physics mistakes as this is just an
+ example of non-microprocessor Meter use, 
+ and it is just for fun.
+ 
+ * Mover class and PVector ideas borrowed from
+ * Daniel Shiffman.  
  */
 
 import meter.*;
@@ -26,23 +27,26 @@ Meter m, av, aa;
 Mover mover;
 float heading;
 
-PVector[] pts = new PVector[1000];
-int[] times = new int[1000];
-float[] tdiff = new float[1000];
-float[] dist = new float[1000];
-int avgVelocity;
+// Set main loop limit and array sizes.
+int iMax = 500;
+PVector[] pts = new PVector[iMax];
+int[] times = new int[iMax];
+float[] tdiff = new float[iMax];
+float[] dist = new float[iMax];
+int[] avgVelocity = new int[iMax];
+int velocity = 0;
 int avgAcceleration = 0;
 int i = 0;
 int maxVelocity = 0;
+int maxAcceleration = 0;
 float dotsPerCM = 255;
 
 void setup() {
-  size(640, 640);
-  // change size to 1000, 1000 and measure your processing window
+  size(1000, 1000);
+  // With the window size at 1000 by 1000, measure your processing window
   // with a ruller. This will tell you the approximate DotsPerCM.
   // Mine turned out to be approximately 255, which is used for
   // the calculations.
-  // size(1000, 1000);
 
   m = new Meter(this, 10, 10, true);
   m.setMeterWidth(280);
@@ -81,22 +85,25 @@ void setup() {
   av.setScaleLabels(scaleLabelsAV);
   av.setMaxScaleValue(3.0);
   av.setDisplayMaximumMeterValue(true);
+  av.setMaximumMeterValue(0);
   int avx = av.getMeterX();
   int avy = av.getMeterY();
   int avh = av.getMeterHeight();
-  
+
   aa = new Meter(this, avx, avy + avh + 20);
   aa.setMeterWidth(280);
-  aa.setMinInputSignal(-100);
-  aa.setMaxInputSignal(100);
-//  aa.setShortTicsBetweenLongTics(0);
+  aa.setMinInputSignal(-200);
+  aa.setMaxInputSignal(200);
+  //  aa.setShortTicsBetweenLongTics(0);
   aa.setMeterTitle("Average Acceleration CM / Sec / Sec");
   String[] scaleLabelsAA = {"-3.0", "-2.0", "-1.0", 
     "0.0", "1.0", "2.2", "3.0"};
   aa.setScaleLabels(scaleLabelsAA);
   aa.setMinScaleValue(-3.0);
   aa.setMaxScaleValue(3.0);
- 
+  aa.setDisplayMaximumMeterValue(true);
+  aa.setMaximumMeterValue(0);
+
   mover = new Mover();
 }
 
@@ -109,11 +116,6 @@ void draw() {
   mover.display();
 }
 
-/*
- * Mover class and PVector ideas borrowed from
- * Daniel Shiffman.  
- */
-
 class Mover {
 
   // The Mover tracks location, velocity, and acceleration 
@@ -124,60 +126,67 @@ class Mover {
   Mover() {
     // Start in the center
     center = new PVector(width/2, height/2);
-    //    System.out.println("center.x: " + center.x + "  center.y: " + center.y);
-
-    // Initialize for comparing
-    //    previous = new PVector();
-    //    previous = center.copy();
   }
 
   void update() {
-
     // Compute a vector that points from center to mouse
     PVector mouse = new PVector(mouseX, mouseY);
     pts[i] = new PVector();
     pts[i] = mouse.copy();
     times[i] = millis();
+
     if (i > 0) {
       // Change milliseconds to seconds
       tdiff[i] = (times[i] - times[i-1]) * .001;
       // Change pixels to CM
       dist[i] = PVector.dist(pts[i], pts[i-1]) / dotsPerCM;
       // Change float to int for meter input
-      avgVelocity = (int)((dist[i] / tdiff[i]) * 10);
-      if (avgVelocity > maxVelocity) {
-        maxVelocity = avgVelocity;
+      avgVelocity[i] = (int)((dist[i] / tdiff[i]) * 10);
+      velocity = avgVelocity[i];
+      if (avgVelocity[i] > maxVelocity) {
+        maxVelocity = avgVelocity[i];
       }
-      System.out.println("i: " + i + "  tdiff[i]: " + tdiff[i] + "  dist[i]: " + dist[i] + 
-          "  avgVelocity: " + avgVelocity + "  max: " + maxVelocity);
+      if (i > 1) {
+        avgAcceleration = (int)((avgVelocity[i] - avgVelocity[i-1]) * 10) / (times[i] - times[i-1]);
+        if (avgAcceleration > maxAcceleration) {
+          maxAcceleration = avgAcceleration;
+        }
+      }
+      // If you wish to see the calculation values.
+//      System.out.println("i: " + i + "  tdiff[i]: " + tdiff[i] + "  dist[i]: " + dist[i] + 
+//        "  avgVelocity: " + avgVelocity[i] + "  max: " + maxVelocity + 
+//        "  avgAcceleleration: " + avgAcceleration + "  maxAcceleration: " + maxAcceleration);
+
+      // Ignore any data when the mouse is not moving by not incrementing the counter.
       if (dist[i] > 0.0) {
         i++;
       }
     }
+    // Ensure there are at least two values before calculating values.
     if (i == 0) {
       i++;
     }
 
-    //   System.out.println("i: " + i + "  diff[i]: " + diff[i] + "  dist[i]: " + dist[i]);
-
-    // System.out.println("center.x: " + center.x + "  center.y: " + center.y);
     // Set mouse position relative to the center.
+    // Compensate for the difference in coordinate systems.
     mouse.x = mouse.x - center.x;
     mouse.y = center.y - mouse.y;
-    //    System.out.println("mouse.x: " + mouse.x + "  mouse.y: " + mouse.y);
     heading = degrees(mouse.heading());
     if (heading < 0) {
       heading += 360.0;
     }
-    //    System.out.println("heading: " + heading);
-    //    System.out.println();
   }
 
   void display() {
     // Compensate for Meter and Polar graphs in different directions.
     m.updateMeter(360 - (int)heading);
-    av.updateMeter(avgVelocity);
+    av.updateMeter(velocity);
     aa.updateMeter(avgAcceleration);
-    //   delay(200);
+    // Reset the counter and reset the maximum values for the Meters.
+    if (i >= iMax) {
+      i = 0;
+      av.setMaximumMeterValue(0);
+      aa.setMaximumMeterValue(0);
+    }
   }
 }
