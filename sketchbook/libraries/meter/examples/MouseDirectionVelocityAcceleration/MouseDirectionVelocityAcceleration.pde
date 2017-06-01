@@ -49,7 +49,7 @@ void setup() {
   // the calculations.
 
   m = new Meter(this, 10, 10, true);
-  m.setMeterWidth(280);
+//  m.setMeterWidth(280);
   int mx = m.getMeterX();
   int my = m.getMeterY();
   int mw = m.getMeterWidth();
@@ -64,9 +64,9 @@ void setup() {
   String[] scaleLabels = {"0", "330", "300", "270", "240", "210", 
     "180", "150", "120", "90", "60", "30", "360"};
   m.setScaleLabels(scaleLabels);
-  int ticMarkPosition = m.getMeterScaleOffsetFromPivotPoint();
+
   m.setTicMarkOffsetFromPivotPoint(20);
-  m.setLongTicMarkLength(ticMarkPosition);
+  m.setLongTicMarkLength(120);
   m.setShortTicsBetweenLongTics(0);
   m.setNeedleLength(180);
 
@@ -76,7 +76,7 @@ void setup() {
   line(5, height/2, width - 5, height/2);
 
   av = new Meter(this, width/2 + 20, 10);
-  av.setMeterWidth(280);
+  av.setMeterWidth(380);
   av.setMaxInputSignal(1000);
   av.setShortTicsBetweenLongTics(0);
   av.setMeterTitle("Average Velocity - CM / Sec");
@@ -85,13 +85,13 @@ void setup() {
   av.setScaleLabels(scaleLabelsAV);
   av.setMaxScaleValue(3.0);
   av.setDisplayMaximumMeterValue(true);
-  av.setMaximumMeterValue(0);
+  av.setMaximumMeterValue(0.0f);
   int avx = av.getMeterX();
   int avy = av.getMeterY();
   int avh = av.getMeterHeight();
 
   aa = new Meter(this, avx, avy + avh + 20);
-  aa.setMeterWidth(280);
+  aa.setMeterWidth(380);
   aa.setMinInputSignal(-200);
   aa.setMaxInputSignal(200);
   //  aa.setShortTicsBetweenLongTics(0);
@@ -102,7 +102,15 @@ void setup() {
   aa.setMinScaleValue(-3.0);
   aa.setMaxScaleValue(3.0);
   aa.setDisplayMaximumMeterValue(true);
-  aa.setMaximumMeterValue(0);
+  
+  // Note: This strange initial value will fool the meter
+  // into thinking that the new maximumMeterValue is 0.0
+  // when the first updateMeter is executed. The maximumMeterValue
+  // is zero but the maximumNeedlePosition is set to the lowest
+  // scale position, which is 180 degrees and not the positin of 0.0
+  // for this example, which is 270 degrees.
+  // Life is interesting at times.
+  aa.setMaximumMeterValue(-0.1f);
 
   mover = new Mover();
 }

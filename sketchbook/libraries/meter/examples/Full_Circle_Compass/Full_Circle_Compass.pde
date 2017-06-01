@@ -24,30 +24,45 @@ void setup() {
   background(255, 255, 200);
 
   // Display a full circle meter.
+  // Make any changes to the meter immediately following its creation
+  // since these only need to be made once.
   m = new Meter(this, 125, 25, true); // Instantiate a full circle meter class.
 
-  // Define where the scale labele will appear
+  // Define where the scale labels will appear
+  // Note that the scale is counter clockwise. In this example
+  // from zero degrees (3:00 Oclock to 360 degrees, again at 3:00 Oclock.
   m.setArcMinDegrees(0.0); // Zero (right side start)
   m.setArcMaxDegrees(360.0); // TWO_PI (right side end)
-  // Define the minimum and maximum meter reading.
-  m.setMinScaleValue(0.0f);
-  m.setMaxScaleValue(255.0f);
-  // In this case, this is the sensor input value.
-  m.setDisplayDigitalMeterValue(true);
-
+  
+  // The scale labels are what the user sees on the meter.
   // Even though the last scale label is not being displayed
   // it must be included in the array. It can be any text value.
+  // The number of scale labels determine the number and placement
+  // of the long tic marks.
   String[] scaleLabels = {"E", "SE", "S", "SW", "W", "NW", "N", "NE", "X"};
   m.setScaleLabels(scaleLabels);
   m.setDisplayLastScaleLabel(false);
+  
+  // Define the minimum and maximum meter reading.
+  // In this example the minimum and maximum inputs are the typical
+  // microprocessor outputs of 0 - 255. So setting the min and max
+  // scale values from 0.0 to 255.0. You will notice that the input
+  // values are integers while the meter scale values are floating point.
+  m.setMinScaleValue(0.0f);
+  m.setMaxScaleValue(255.0f);
+  
+  // Displaying the meterValue, in this case, is the sensor input value,
+  // but converted to floating point.
+  m.setDisplayDigitalMeterValue(true);
 
-  // Change the title from the default "Voltage" to a more meaningful label.
+   // Change the title from the default "Voltage" to a more meaningful label.
   m.setMeterTitle("Direction");
 }
 
 void draw() {
 
-  // Simulate sensor data.
+  // Simulate sensor data. If the input data is of a different range
+  // change the above values to display the correct meter readings.
   int newSensorReading;
   newSensorReading = (int)random(0, 255);
 

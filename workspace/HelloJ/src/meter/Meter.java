@@ -278,6 +278,7 @@ public class Meter {
 		
 		setDisplayMaximumMeterValue(false);
 		setMaximumMeterValue(0.0f);
+		setMaximumMeterPosition(PApplet.radians((float) arcMinDegrees));
 		setMaximumNeedleLength(135);
 		setMaximumNeedleColor(p.color(230, 30, 230));
 		setMaximumNeedleThickness(1);
@@ -401,6 +402,10 @@ public class Meter {
 	
 	public float getMaximumMeterValue() {
 		return maximumMeterValue;
+	}
+	
+	private void setMaximumMeterPosition(float position) {
+		maximumMeterPosition = position;
 	}
 	
 	/**
@@ -1400,8 +1405,8 @@ public class Meter {
 				PApplet.radians((float) arcMinDegrees), 
 				PApplet.radians((float) arcMaxDegrees));
 		if (newSensorValue > maximumMeterValue) {
-			maximumMeterValue = newSensorValue;
-			maximumMeterPosition = newMeterPosition;
+			setMaximumMeterValue(newSensorValue);
+			setMaximumMeterPosition(newMeterPosition);
 		}
 	}
 
