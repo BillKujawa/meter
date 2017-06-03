@@ -1,6 +1,8 @@
 /* //<>//
  Default meter example. No hardware.
  Get and print all default values.
+ Change the input value once to demonstrate the
+ difference between currentMeterValue and maximumMeterValue.
  */
 import meter.*;
 
@@ -11,7 +13,7 @@ void setup() {
   background(255, 255, 200);
 
   m = new Meter(this, 50, 25);
-  // m.updateMeter(0); // Display meter with zero input sensor value.
+  m.updateMeter(200); // Display meter with zero input sensor value.
 
   noLoop();
 
@@ -100,12 +102,18 @@ void setup() {
   System.out.println("inputSignalOutOfRangeFontSize: " + m.getInputSignalOutOfRangeFontSize());
   System.out.println("inputSignalOutOfRangeText: \"" + m.getInputSignalOutOfRangeText().replace("\n", "\\n") + "\"");
   System.out.println("inputSignalOutOfRangeTextFromPivotPoint: " + m.getInputSignalOutOfRangeTextFromPivotPoint());
+  System.out.println("displayMaximumMeterValue: " + m.getDisplayMaximumMeterValue());
+  System.out.println("maximumNeedleColor: " + (int)red(m.getMaximumNeedleColor()) + ", " + 
+    (int)green(m.getMaximumNeedleColor()) + ", " + (int)blue(m.getMaximumNeedleColor()));
+  System.out.println("maximumNeedleLength: " + m.getMaximumNeedleLength());
+  System.out.println("maximumNeedleThickness: " + m.getMaximumNeedleThickness());
 }
 
 void draw() {
   int sensorValue = 128;
-  delay(700);
+  delay(700); 
   //   sensorValue = (int)random(minIn, maxIn);  // Input for testing
   m.updateMeter(sensorValue); // Update the sensor value to the meter.
   System.out.println("currentMeterValue: " + m.getCurrentMeterValue());
+  System.out.println("maximumMeterValue: " + m.getMaximumMeterValue());
 }

@@ -136,7 +136,7 @@ public class Meter {
 	// display it if displayDigitalMeterValue is false.
 	private boolean displayMaximumMeterValue;
 	private float maximumMeterValue;
-	private float maximumMeterPosition;
+	private float maximumMeterNeedlePosition;
 	private int maximumNeedleLength;
 	private int maximumNeedleColor;
 	private int maximumNeedleThickness;
@@ -278,7 +278,7 @@ public class Meter {
 		
 		setDisplayMaximumMeterValue(false);
 		setMaximumMeterValue(0.0f);
-		setMaximumMeterPosition(PApplet.radians((float) arcMinDegrees));
+		setMaximumMeterNeedlePosition(PApplet.radians((float) arcMinDegrees));
 		setMaximumNeedleLength(135);
 		setMaximumNeedleColor(p.color(230, 30, 230));
 		setMaximumNeedleThickness(1);
@@ -371,7 +371,7 @@ public class Meter {
 	}
 	
 	/**
-	 * Enable display of Maximum Meter Value at bottom of meter.
+	 * Enable display of Maximum Meter Value obtained, at bottom of meter.
 	 * May not be enabled if displayDigitalMeterValue is enabled.
 	 * 
 	 * @param displayMaximumValue
@@ -394,6 +394,7 @@ public class Meter {
 	
 	/**
 	 * Used to reset the maximum value or set a minimum value.
+	 * 
 	 * @param maxValue
 	 */
 	public void setMaximumMeterValue(float maxValue) {
@@ -404,8 +405,8 @@ public class Meter {
 		return maximumMeterValue;
 	}
 	
-	private void setMaximumMeterPosition(float position) {
-		maximumMeterPosition = position;
+	private void setMaximumMeterNeedlePosition(float position) {
+		maximumMeterNeedlePosition = position;
 	}
 	
 	/**
@@ -508,6 +509,7 @@ public class Meter {
 
 	/**
 	 * Activate low sensor warning
+	 * Display a message when sensor value is below specified level.
 	 * 
 	 * @param sensorActive
 	 */
@@ -522,6 +524,7 @@ public class Meter {
 
 	/**
 	 * Activate high sensor warning
+	 * Display a message when sensor value is above specified level.
 	 * 
 	 * @param sensorActive
 	 */
@@ -562,6 +565,11 @@ public class Meter {
 		return highSensorWarningValue;
 	}
 
+	/**
+	 * The area of the arc below the minimum sensor value.
+	 * 
+	 * @param lowWarningColor
+	 */
 	public void setLowSensorWarningArcColor(int lowWarningColor) {
 		lowSensorWarningArcColor = lowWarningColor;
 		meterChanged = true;
@@ -586,6 +594,11 @@ public class Meter {
 		return midSensorWarningArcColor;
 	}
 
+	/**
+	 * The area of the arc above the maximum sensor value.
+	 * 
+	 * @param highWarningColor
+	 */
 	public void setHighSensorWarningArcColor(int highWarningColor) {
 		highSensorWarningArcColor = highWarningColor;
 		meterChanged = true;
@@ -670,7 +683,7 @@ public class Meter {
 	 Call initializeDefaultValues to reset them and apply the scale
 	 factor.
 	 Place the pivot point in the horizontal center and just above the
-	 bottom.
+	 bottom for a half circle meter.
 	 */
 	public void setMeterWidth(int mWidth) {
 
@@ -845,6 +858,7 @@ public class Meter {
 	}
 
 	// Position the title just below the top of the meter frame
+	// and adjust for the text size.
 	private void drawMeterTitle() {
 		mTitle = p.createGraphics(p.width, p.height);
 		mTitle.beginDraw();
@@ -898,7 +912,7 @@ public class Meter {
 
 	/**
 	 * Set the width and length of the arc circle
-	 * from the needle pivot point
+	 * from the needle pivot point.
 	 * 
 	 * @param offset
 	 */
@@ -913,9 +927,9 @@ public class Meter {
 	}
 
 	/**
-	 * Set the minimum sensor reading expected
+	 * Set the minimum sensor reading (input) expected.
 	 * A warning message is issued if this value is greater
-	 * than the maxInputSignal expected
+	 * than the maxInputSignal expected.
 	 * 
 	 * @param minIn
 	 */
@@ -934,9 +948,9 @@ public class Meter {
 	}
 
 	/**
-	 * Set the maximum sensor reading expected
+	 * Set the maximum sensor reading (input) expected.
 	 * A warning message is issued if this value is less
-	 * than the minInputSignal expected
+	 * than the minInputSignal expected.
 	 * 
 	 * @param maxIn
 	 */
@@ -1006,6 +1020,11 @@ public class Meter {
 		return inputSignalOutOfRangeText;
 	}
 	
+	/**
+	 * Adjust the position of the text from the pivot point.
+	 * 
+	 * @param outOfRangeTextOffset
+	 */
 	public void setInputSignalOutOfRangeTextFromPivotPoint(int outOfRangeTextOffset) {
 		inputSignalOutOfRangeTextFromPivotPoint = scale(outOfRangeTextOffset);
 		meterChanged = true;
@@ -1016,7 +1035,7 @@ public class Meter {
 	}
 
 	/**
-	 * This is the minimum meter reading.
+	 * This is the minimum meter reading or value.
 	 * For numeric scale labels, it would be the first value.
 	 * This allows for non-numeric labels.
 	 * It corresponds to the minInputSignal.
@@ -1031,10 +1050,12 @@ public class Meter {
 	}
 	
 	/**
-	 * This is the maximum meter reading.
+	 * This is the maximum meter reading or value.
 	 * For numeric scale labels, it would be the last value.
 	 * This allows for non-numeric labels.
-	 * It corresponds to the maxInputSignal.
+	 * It corresponds to the maxInputSignal. As an example,
+	 * a 0 - 255 microprocessor input signal is matched to a
+	 * 0.0 - 5.0 meter value.
 	 */
 	public void setMaxScaleValue(float maxValue) {
 		maxScaleValue = maxValue;
@@ -1047,7 +1068,7 @@ public class Meter {
 
 	/**
 	// The arc color when no low or high warnings are enabled
-	// Note: should be the middle arc color.
+	// Note: will be changed to the midSensorWarningArcColor.
 	 */
 	public void setArcColor(int aColor) {
 		arcColor = aColor;
@@ -1059,7 +1080,10 @@ public class Meter {
 	}
 	
 	/**
-	 * Allows the removal of the arc from the meter
+	 * Allows the removal of the arc from the meter.
+	 * Note: the arc would be the mirror on a real analog meter.
+	 * It was used to align the needle with your eye to
+	 * ensure a correct reading.
 	 * 
 	 * @param displayArc
 	 */
@@ -1086,6 +1110,8 @@ public class Meter {
 	 * 0.0 degrees is at 3:00 o'clock and moves clockwise
 	 * The default arc is 180.0 degrees at 9:00 o'clock
 	 * to 360.0 degrees at 3:00 o'clock.
+	 * Note: use a full circle meter for arc starts less
+	 * than 180.0 degrees.
 	 * 
 	 * @param minDegrees
 	 */
@@ -1105,7 +1131,8 @@ public class Meter {
 
 	/**
 	 * Determines where the meter arc ends.
-	 * 360.0 degrees is at 3:00 o'clock.
+	 * 360.0 degrees is at 3:00 o'clock. Use a full circle meter
+	 * if using a larger value.
 	 * 
 	 * @param maxDegrees
 	 */
@@ -1196,10 +1223,15 @@ public class Meter {
 	}
 
 	/**
-	 * Each label will coinside with a long tic mark
-	 * These are numeric labels. The first and last of
-	 * the array are used to calculate the tic spacing
-	 * even when alternate labels are used.
+	 * Each label will coincide with a long tic mark.
+	 * The minimumMeterValue and maximumMeterValue are
+	 * used to calculate the tic spacing. This allows for
+	 * non-numeric scale labels.
+	 * Note: for a full circle meter with 360 degree labels,
+	 * include the last label even if it would overlap the
+	 * first label. In that case set displayLastScaleLabel
+	 * to false. The number of labels determines the
+	 * correct spacing.
 	 * 
 	 * @param labels
 	 */
@@ -1228,7 +1260,7 @@ public class Meter {
 
 	/**
 	 * Disable the display of the last scale label for a full circle
-	 * meter to prevent the last label from overwriting the first one
+	 * meter. This prevents the last label from overwriting the first one.
 	 * 
 	 * @param displayLastLabel
 	 */
@@ -1330,6 +1362,12 @@ public class Meter {
 		return ticMarkThickness;
 	}
 
+	/**
+	 * Where to start drawing the tic marks. Their length
+	 * determines how close to the meter arc they are drawn.
+	 * 
+	 * @param ticOffset
+	 */
 	public void setTicMarkOffsetFromPivotPoint(int ticOffset) {
 		ticMarkOffsetFromPivotPoint = scale(ticOffset);
 		meterChanged = true;
@@ -1396,7 +1434,7 @@ public class Meter {
 	 * 
 	 * @param newSensorReading
 	 */
-	public void updateMeterReading(int newSensorReading) {
+	private void updateMeterReading(int newSensorReading) {
 		// Determine needle position relative to meter scale
 		// Use the first and last values from the scaleLabels array
 		newSensorValue = PApplet.map((float) newSensorReading, (float) minInputSignal, 
@@ -1406,7 +1444,7 @@ public class Meter {
 				PApplet.radians((float) arcMaxDegrees));
 		if (newSensorValue > maximumMeterValue) {
 			setMaximumMeterValue(newSensorValue);
-			setMaximumMeterPosition(newMeterPosition);
+			setMaximumMeterNeedlePosition(newMeterPosition);
 		}
 	}
 
@@ -1442,7 +1480,7 @@ public class Meter {
 	
 
 	/**
-	 * The length of the maximum meter value needle
+	 * The length of the maximum meter value needle.
 	 * 	
 	 * @param length
 	 */
@@ -1455,7 +1493,7 @@ public class Meter {
 	}
 
 	/**
-	 * The color of the maximum meter value needle
+	 * The color of the maximum meter value needle.
 	 * 
 	 * @param needleColor
 	 */
@@ -1468,7 +1506,7 @@ public class Meter {
 	}
 
 	/**
-	 * The width of the maximum meter value needle
+	 * The width of the maximum meter value needle.
 	 * 
 	 * @param thickness
 	 */
@@ -1498,8 +1536,8 @@ public class Meter {
 		
 		// Draw maximum meter value needle if enabled
 		if (displayMaximumMeterValue == true) {
-			needleX = pivotPointX + (PApplet.cos(maximumMeterPosition) * maximumNeedleLength);
-			needleY = pivotPointY + PApplet.sin(maximumMeterPosition) * maximumNeedleLength;
+			needleX = pivotPointX + (PApplet.cos(maximumMeterNeedlePosition) * maximumNeedleLength);
+			needleY = pivotPointY + PApplet.sin(maximumMeterNeedlePosition) * maximumNeedleLength;
 			mNeedle.stroke(maximumNeedleColor);
 			mNeedle.strokeWeight(maximumNeedleThickness);
 			mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
