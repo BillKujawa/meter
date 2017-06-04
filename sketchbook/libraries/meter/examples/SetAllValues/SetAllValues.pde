@@ -31,16 +31,16 @@ void setup() {
   m = new Meter(this, 125, 25, true);
 
   m.setMeterWidth(400);
-  m.setMeterFrameThickness(10);
-  m.setMeterFrameColor(color(245, 10, 14));
-  m.setMeterFrameStyle(PConstants.MITER);
+  m.setFrameThickness(10);
+  m.setFrameColor(color(245, 10, 14));
+  m.setFrameStyle(PConstants.MITER);
 
-  m.setMeterTitleFontSize(34);
-  m.setMeterTitleFontName("Arial Bold Italic");
-  m.setMeterTitleFontColor(color(0, 200, 0));
-  m.setMeterTitle("Change");
+  m.setTitleFontSize(34);
+  m.setTitleFontName("Arial Bold Italic");
+  m.setTitleFontColor(color(0, 200, 0));
+  m.setTitle("Change");
   // Move title down
-  m.setMeterTitleYOffset(18);  // default is 12 pixels
+  m.setTitleYOffset(18);  // default is 12 pixels
 
   // Input signal range
   m.setMinInputSignal(0);
@@ -59,10 +59,10 @@ void setup() {
   // Meter Scale
   String[] scaleLabels = {"0", "10", "20", "30", "40", "50", "60", "70", "80"};
   m.setScaleLabels(scaleLabels);
-  m.setMeterScaleFontSize(30);
-  m.setMeterScaleFontName("Times New Roman Bold Italic");
-  m.setMeterScaleFontColor(color(232, 33, 73));
-  m.setMeterScaleOffsetFromPivotPoint(165);
+  m.setScaleFontSize(30);
+  m.setScaleFontName("Times New Roman Bold Italic");
+  m.setScaleFontColor(color(232, 33, 73));
+  m.setScaleOffsetFromPivotPoint(165);
 
   // Tic Marks
   m.setLongTicMarkLength(60);
@@ -81,8 +81,8 @@ void setup() {
 
   // Pivot Point
   // Note that meterPivotPointX and meterPivotPointY are not settable.
-  m.setMeterPivotPointSize(20);
-  m.setMeterPivotPointColor(color(62, 211, 140));
+  m.setPivotPointSize(20);
+  m.setPivotPointColor(color(62, 211, 140));
 
   // Needle
   m.setNeedleLength(160);
@@ -114,6 +114,11 @@ void setup() {
   m.setInputSignalOutOfRangeFontSize(30);
   m.setInputSignalOutOfRangeText("Woops\nMy Bad");
   m.setInputSignalOutOfRangeTextFromPivotPoint(-40);
+  
+  // Display the maximum value obtained so far.
+  m.setMaximumNeedleColor(color(0, 0, 255));
+  m.setMaximumNeedleLength(100);
+  m.setMaximumNeedleThickness(3);
 }
 
 void draw() {
@@ -124,26 +129,32 @@ void draw() {
     m.setDisplayLastScaleLabel(false);
     m.setLowSensorWarningActive(false);
     m.setEnableInputSignalOutOfRange(false);
+    m.setDisplayMaximumValue(true);
   }
   if (i==8) {
     m.setHighSensorWarningActive(false);
     m.setDisplayWarningMessagesToOutput(false);
+    m.setDisplayDigitalMeterValue(false);
   }
   if (i == 10) {
     m.setDisplayArc(true);
+    m.setDisplayMaximumValue(true);
   }
   if (i==12) {
     m.setLowSensorWarningActive(true);
+    m.setDisplayDigitalMeterValue(true);
   }
   if (i==14) {
     m.setHighSensorWarningActive(true);
     m.setEnableInputSignalOutOfRange(true);
+    m.setMaximumValue(1.0);
   }
   if (i == 16) {
     m.setDisplayLastScaleLabel(true);
     m.setDisplayWarningMessagesToOutput(true);
   }
   if (i > 20) {
+    m.setDisplayMaximumValue(false);
     i = 0;
   }
 

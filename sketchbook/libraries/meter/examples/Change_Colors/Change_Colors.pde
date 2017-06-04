@@ -23,11 +23,11 @@ void setup() {
   // Display a full circle meter.
   m = new Meter(this, 125, 25, true); // Instantiate a full circle meter class.
 
-  m.setMeterFrameColor(color(100, 0, 0));
-  m.setMeterTitleFontColor(color(0, 200, 0));
-  m.setMeterPivotPointColor(color(255, 0, 0));
+  m.setFrameColor(color(100, 0, 0));
+  m.setTitleFontColor(color(0, 200, 0));
+  m.setPivotPointColor(color(255, 0, 0));
   m.setArcColor(color(0, 0, 200));
-  m.setMeterScaleFontColor(color(200, 100, 0));
+  m.setScaleFontColor(color(200, 100, 0));
   m.setTicMarkColor(color(217, 22, 247));
   // Define where the scale labele will appear
   m.setArcMinDegrees(90.0); // (start)
@@ -41,7 +41,7 @@ void setup() {
   m.setScaleLabels(scaleLabels);
 
   // Change the title from the default "Voltage" to a more meaningful label.
-  m.setMeterTitle("Rainbow");
+  m.setTitle("Rainbow");
 
   // Display the digital meter value.
   m.setDisplayDigitalMeterValue(true);

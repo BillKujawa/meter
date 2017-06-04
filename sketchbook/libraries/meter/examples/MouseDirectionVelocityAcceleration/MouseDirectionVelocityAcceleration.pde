@@ -53,7 +53,7 @@ void setup() {
   int mx = m.getMeterX();
   int my = m.getMeterY();
   int mw = m.getMeterWidth();
-  m.setMeterTitle("Direction");
+  m.setTitle("Direction");
   m.setMinScaleValue(0.0f);
   m.setMaxScaleValue(360.0f);
   m.setMaxInputSignal(360);
@@ -79,13 +79,13 @@ void setup() {
   av.setMeterWidth(380);
   av.setMaxInputSignal(1000);
   av.setShortTicsBetweenLongTics(0);
-  av.setMeterTitle("Average Velocity - CM / Sec");
+  av.setTitle("Average Velocity - CM / Sec");
   String[] scaleLabelsAV = {"0", "0.5", "1.0", 
     "1.5", "2.0", "2.5", "3.0"};
   av.setScaleLabels(scaleLabelsAV);
   av.setMaxScaleValue(3.0);
-  av.setDisplayMaximumMeterValue(true);
-  av.setMaximumMeterValue(0.0f);
+  av.setDisplayMaximumValue(true);
+  av.setMaximumValue(0.0f);
   int avx = av.getMeterX();
   int avy = av.getMeterY();
   int avh = av.getMeterHeight();
@@ -95,13 +95,13 @@ void setup() {
   aa.setMinInputSignal(-200);
   aa.setMaxInputSignal(200);
   //  aa.setShortTicsBetweenLongTics(0);
-  aa.setMeterTitle("Average Acceleration CM / Sec / Sec");
+  aa.setTitle("Average Acceleration CM / Sec / Sec");
   String[] scaleLabelsAA = {"-3.0", "-2.0", "-1.0", 
     "0.0", "1.0", "2.2", "3.0"};
   aa.setScaleLabels(scaleLabelsAA);
   aa.setMinScaleValue(-3.0);
   aa.setMaxScaleValue(3.0);
-  aa.setDisplayMaximumMeterValue(true);
+  aa.setDisplayMaximumValue(true);
   
   // Note: This strange initial value will fool the meter
   // into thinking that the new maximumMeterValue is 0.0
@@ -110,7 +110,7 @@ void setup() {
   // scale position, which is 180 degrees and not the positin of 0.0
   // for this example, which is 270 degrees.
   // Life is interesting at times.
-  aa.setMaximumMeterValue(-0.1f);
+  aa.setMaximumValue(-0.1f);
 
   mover = new Mover();
 }
@@ -193,8 +193,8 @@ class Mover {
     // Reset the counter and reset the maximum values for the Meters.
     if (i >= iMax) {
       i = 0;
-      av.setMaximumMeterValue(0);
-      aa.setMaximumMeterValue(0);
+      av.setMaximumValue(0);
+      aa.setMaximumValue(0);
     }
   }
 }

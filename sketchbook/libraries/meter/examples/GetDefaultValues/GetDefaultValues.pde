@@ -22,10 +22,10 @@ void setup() {
   System.out.println("meterWidth: " + m.getMeterWidth());
   System.out.println("meterHeight: " + m.getMeterHeight());
   System.out.println("fullCircle: " + m.getFullCircle());
-  System.out.println("meterFrameThickness: " + m.getMeterFrameThickness());
-  System.out.println("meterFrameColor: " + (int)red(m.getMeterFrameColor()) + ", " + 
-    (int)green(m.getMeterFrameColor()) + ", " + (int)blue(m.getMeterFrameColor()));
-  System.out.println("meterFrameStyle: " + m.getMeterFrameStyle());
+  System.out.println("frameThickness: " + m.getFrameThickness());
+  System.out.println("frameColor: " + (int)red(m.getFrameColor()) + ", " + 
+    (int)green(m.getFrameColor()) + ", " + (int)blue(m.getFrameColor()));
+  System.out.println("meterFrameStyle: " + m.getFrameStyle());
   System.out.println("informationAreaFontSize: " + m.getInformationAreaFontSize());
   System.out.println("informationAreaTextYOffset: " + m.getInformationAreaTextYOffset());
   System.out.println("informationAreaFontName: " + m.getInformationAreaFontName());
@@ -33,17 +33,17 @@ void setup() {
     (int)green(m.getInformationAreaFontColor()) + ", " + (int)blue(m.getInformationAreaFontColor()));
   System.out.println("displayDigitalMeterValue: " + m.getDisplayDigitalMeterValue());
   System.out.println("currentMeterValue: " + m.getCurrentMeterValue());
-  System.out.println("meterTitle: \"" + m.getMeterTitle() + "\"");
-  System.out.println("meterTitleFontName: " + m.getMeterTitleFontName());
-  System.out.println("meterTitleFontSize: " + m.getMeterTitleFontSize());
-  System.out.println("meterTitleFontColor: " + (int)red(m.getMeterTitleFontColor()) + ", " + 
-    (int)green(m.getMeterTitleFontColor()) + ", " + (int)blue(m.getMeterTitleFontColor()));
-  System.out.println("meterTitleYOffset: " + m.getMeterTitleYOffset());
-  System.out.println("meterPivotPointX: " + m.getMeterPivotPointX());
-  System.out.println("meterPivotPointY: " + m.getMeterPivotPointY());
-  System.out.println("meterPivotPointSize: " + m.getMeterPivotPointSize());
-  System.out.println("meterPivotPointColor: " + (int)red(m.getMeterPivotPointColor()) + ", " + 
-    (int)green(m.getMeterPivotPointColor()) + ", " + (int)blue(m.getMeterPivotPointColor()));
+  System.out.println("title: \"" + m.getTitle() + "\"");
+  System.out.println("titleFontName: " + m.getTitleFontName());
+  System.out.println("titleFontSize: " + m.getTitleFontSize());
+  System.out.println("titleFontColor: " + (int)red(m.getTitleFontColor()) + ", " + 
+    (int)green(m.getTitleFontColor()) + ", " + (int)blue(m.getTitleFontColor()));
+  System.out.println("titleYOffset: " + m.getTitleYOffset());
+  System.out.println("pivotPointX: " + m.getPivotPointX());
+  System.out.println("pivotPointY: " + m.getPivotPointY());
+  System.out.println("pivotPointSize: " + m.getPivotPointSize());
+  System.out.println("pivotPointColor: " + (int)red(m.getPivotPointColor()) + ", " + 
+    (int)green(m.getPivotPointColor()) + ", " + (int)blue(m.getPivotPointColor()));
   System.out.println("minInputSignal: " + m.getMinInputSignal());
   System.out.println("maxInputSignal: " + m.getMaxInputSignal());
   System.out.println("arcMinDegrees: " + m.getArcMinDegrees());
@@ -54,11 +54,11 @@ void setup() {
   System.out.println("arcColor: " + (int)red(m.getArcColor()) + ", " + 
     (int)green(m.getArcColor()) + ", " + (int)blue(m.getArcColor()));
   System.out.println("arcThickness: " + m.getArcThickness());
-  System.out.println("meterScaleFontName: " + m.getMeterScaleFontName());
-  System.out.println("meterScaleFontColor: " + (int)red(m.getMeterScaleFontColor()) + ", " + 
-    (int)green(m.getMeterScaleFontColor()) + ", " + (int)blue(m.getMeterScaleFontColor()));
-  System.out.println("meterScaleFontSize: " + m.getMeterScaleFontSize());
-  System.out.println("meterScaleOffsetFromPivotPoint: " + m.getMeterScaleOffsetFromPivotPoint());
+  System.out.println("scaleFontName: " + m.getScaleFontName());
+  System.out.println("scaleFontColor: " + (int)red(m.getScaleFontColor()) + ", " + 
+    (int)green(m.getScaleFontColor()) + ", " + (int)blue(m.getScaleFontColor()));
+  System.out.println("pcaleFontSize: " + m.getScaleFontSize());
+  System.out.println("pcaleOffsetFromPivotPoint: " + m.getScaleOffsetFromPivotPoint());
   System.out.println("displayLastScaleLabel: " + m.getDisplayLastScaleLabel());
   // Display the String array as a string
   System.out.println("scaleLabels: \"" + join(m.getScaleLabels(), "\", \"") + "\"");
@@ -102,7 +102,7 @@ void setup() {
   System.out.println("inputSignalOutOfRangeFontSize: " + m.getInputSignalOutOfRangeFontSize());
   System.out.println("inputSignalOutOfRangeText: \"" + m.getInputSignalOutOfRangeText().replace("\n", "\\n") + "\"");
   System.out.println("inputSignalOutOfRangeTextFromPivotPoint: " + m.getInputSignalOutOfRangeTextFromPivotPoint());
-  System.out.println("displayMaximumMeterValue: " + m.getDisplayMaximumMeterValue());
+  System.out.println("displayMaximumValue: " + m.getDisplayMaximumValue());
   System.out.println("maximumNeedleColor: " + (int)red(m.getMaximumNeedleColor()) + ", " + 
     (int)green(m.getMaximumNeedleColor()) + ", " + (int)blue(m.getMaximumNeedleColor()));
   System.out.println("maximumNeedleLength: " + m.getMaximumNeedleLength());
@@ -115,5 +115,5 @@ void draw() {
   //   sensorValue = (int)random(minIn, maxIn);  // Input for testing
   m.updateMeter(sensorValue); // Update the sensor value to the meter.
   System.out.println("currentMeterValue: " + m.getCurrentMeterValue());
-  System.out.println("maximumMeterValue: " + m.getMaximumMeterValue());
+  System.out.println("maximumValue: " + m.getMaximumValue());
 }

@@ -56,7 +56,7 @@ void setup() {
   m.setDisplayDigitalMeterValue(true);
 
    // Change the title from the default "Voltage" to a more meaningful label.
-  m.setMeterTitle("Direction");
+  m.setTitle("Direction");
 }
 
 void draw() {

@@ -57,9 +57,9 @@ public class Meter {
 	private boolean displayWarningMessagesToOutput;
 
 	// The meter frame.
-	private int meterFrameThickness;
-	private int meterFrameColor;
-	private int meterFrameStyle;
+	private int frameThickness;
+	private int frameColor;
+	private int frameStyle;
 
 	// Information area at bottom of meter for displaying sensor values
 	private int informationAreaFontSize;
@@ -72,17 +72,17 @@ public class Meter {
 	private boolean displayDigitalMeterValue;
 
 	// Display a title at the top of the meter.
-	private String meterTitleFontName;
-	private int meterTitleFontSize;
-	private PFont meterTitleFont;
-	private int meterTitleFontColor;
-	private String meterTitle;
+	private String titleFontName;
+	private int titleFontSize;
+	private PFont titleFont;
+	private int titleFontColor;
+	private String title;
 	// Adjust title distance from meter Y origin
-	private int meterTitleYOffset;
+	private int titleYOffset;
 
 	// Define the meter needle pivot point.
-	private int meterPivotPointSize;
-	private int meterPivotPointColor;
+	private int pivotPointSize;
+	private int pivotPointColor;
 
 	// Define the sensor input values and relate them to the meter scale.
 	private int minInputSignal;
@@ -109,11 +109,11 @@ public class Meter {
 	private int arcThickness;
 
 	// The meter scale values.
-	private String meterScaleFontName;
-	private PFont meterScaleFont;
-	private int meterScaleFontColor;
-	private int meterScaleFontSize;
-	private int meterScaleOffsetFromPivotPoint;
+	private String scaleFontName;
+	private PFont scaleFont;
+	private int scaleFontColor;
+	private int scaleFontSize;
+	private int scaleOffsetFromPivotPoint;
 	// Set to false to prevent last label overwriting first label
 	private boolean displayLastScaleLabel;
 	private String[] scaleLabels;
@@ -134,9 +134,9 @@ public class Meter {
 	
 	// Keep track of the maximum meter value and
 	// display it if displayDigitalMeterValue is false.
-	private boolean displayMaximumMeterValue;
-	private float maximumMeterValue;
-	private float maximumMeterNeedlePosition;
+	private boolean displayMaximumValue;
+	private float maximumValue;
+	private float maximumNeedlePosition;
 	private int maximumNeedleLength;
 	private int maximumNeedleColor;
 	private int maximumNeedleThickness;
@@ -211,7 +211,7 @@ public class Meter {
 		meterX = x;
 		meterY = y;
 		setFullCircle(fullCircle);
-		setMeterFrameThickness(DEFAULTFRAMETHICKNESS);
+		setFrameThickness(DEFAULTFRAMETHICKNESS);
 		setMeterWidth(DEFAULTWIDTH);
 	}
 	
@@ -220,8 +220,8 @@ public class Meter {
 	// Note: changing the order can cause interesting and unwanted results.
 	private void initializeDefaultValues() {
 		setDisplayWarningMessagesToOutput(true);
-		setMeterFrameColor(p.color(0, 0, 0));
-		setMeterFrameStyle(PConstants.BEVEL);
+		setFrameColor(p.color(0, 0, 0));
+		setFrameStyle(PConstants.BEVEL);
 
 		setInformationAreaFontSize(20);
 		setInformationAreaTextYOffset(10);
@@ -229,14 +229,14 @@ public class Meter {
 		setInformationAreaFontColor(p.color(0, 0, 255));
 		setDisplayDigitalMeterValue(false);
 
-		setMeterTitleFontSize(24);
-		setMeterTitleFontName("Liberation Sans Bold");
-		setMeterTitleFontColor(p.color(0, 0, 0));
-		setMeterTitle("Voltage");
-		setMeterTitleYOffset(12);
+		setTitleFontSize(24);
+		setTitleFontName("Liberation Sans Bold");
+		setTitleFontColor(p.color(0, 0, 0));
+		setTitle("Voltage");
+		setTitleYOffset(12);
 
-		setMeterPivotPointSize(10);
-		setMeterPivotPointColor(p.color(0, 0, 0));
+		setPivotPointSize(10);
+		setPivotPointColor(p.color(0, 0, 0));
 
 		setMinInputSignal(0);
 		setMaxInputSignal(255);
@@ -255,10 +255,10 @@ public class Meter {
 		setArcMinDegrees(180.0); // PI (left side)
 		setArcMaxDegrees(360.0); // TWO_PI (right side)
 
-		setMeterScaleFontSize(16);
-		setMeterScaleFontName("DejaVu Sans Bold");
-		setMeterScaleFontColor(p.color(0, 0, 0));
-		setMeterScaleOffsetFromPivotPoint(170);
+		setScaleFontSize(16);
+		setScaleFontName("DejaVu Sans Bold");
+		setScaleFontColor(p.color(0, 0, 0));
+		setScaleOffsetFromPivotPoint(170);
 		setDisplayLastScaleLabel(true);
 		String[] scaleLabels = { "0.0", "1.0", "2.0", "3.0", "4.0", "5.0" };
 		setScaleLabels(scaleLabels);
@@ -276,9 +276,9 @@ public class Meter {
 		setNeedleColor(p.color(255, 0, 0));
 		setNeedleThickness(1);
 		
-		setDisplayMaximumMeterValue(false);
-		setMaximumMeterValue(0.0f);
-		setMaximumMeterNeedlePosition(PApplet.radians((float) arcMinDegrees));
+		setDisplayMaximumValue(false);
+		setMaximumValue(0.0f);
+		setMaximumNeedlePosition(PApplet.radians((float) arcMinDegrees));
 		setMaximumNeedleLength(135);
 		setMaximumNeedleColor(p.color(230, 30, 230));
 		setMaximumNeedleThickness(1);
@@ -355,13 +355,13 @@ public class Meter {
 	 * @param displayMeterValue
 	 */
 	public void setDisplayDigitalMeterValue(boolean displayMeterValue) {
-		if (displayMeterValue == false || displayMaximumMeterValue == false) {
+		if (displayMeterValue == false || displayMaximumValue == false) {
 			displayDigitalMeterValue = displayMeterValue;
 			meterChanged = true;
 		}
 		else {
 			String errorMessage = "displayMeterValue may not be enabled while " +
-					"displayMaximumMeterValue is enabled.";
+					"displayMaximumValue is enabled.";
 			displayErrorMessage(errorMessage);
 		}
 	}
@@ -376,9 +376,9 @@ public class Meter {
 	 * 
 	 * @param displayMaximumValue
 	 */
-	public void setDisplayMaximumMeterValue(boolean displayMaximumValue) {
+	public void setDisplayMaximumValue(boolean displayMaximumValue) {
 		if (displayMaximumValue == false || displayDigitalMeterValue == false) {
-			displayMaximumMeterValue = displayMaximumValue;
+			this.displayMaximumValue = displayMaximumValue;
 			meterChanged = true;
 		}
 		else {
@@ -388,8 +388,8 @@ public class Meter {
 		}
 	}
 
-	public boolean getDisplayMaximumMeterValue() {
-		return displayMaximumMeterValue;
+	public boolean getDisplayMaximumValue() {
+		return displayMaximumValue;
 	}
 	
 	/**
@@ -397,16 +397,16 @@ public class Meter {
 	 * 
 	 * @param maxValue
 	 */
-	public void setMaximumMeterValue(float maxValue) {
-		maximumMeterValue = maxValue;
+	public void setMaximumValue(float maxValue) {
+		maximumValue = maxValue;
 	}
 	
-	public float getMaximumMeterValue() {
-		return maximumMeterValue;
+	public float getMaximumValue() {
+		return maximumValue;
 	}
 	
-	private void setMaximumMeterNeedlePosition(float position) {
-		maximumMeterNeedlePosition = position;
+	private void setMaximumNeedlePosition(float position) {
+		maximumNeedlePosition = position;
 	}
 	
 	/**
@@ -690,10 +690,10 @@ public class Meter {
 		meterWidth = mWidth;
 		if (fullCircle == true) {
 			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOFULLCIRCLE) + 
-					meterFrameThickness * 2;
+					frameThickness * 2;
 		} else {
 			meterHeight = (int) (mWidth * HEIGHTTOWIDTHRATIOHALFCIRCLE) + 
-					meterFrameThickness * 2;
+					frameThickness * 2;
 		}
 
 		if (mWidth != DEFAULTWIDTH) {
@@ -705,7 +705,7 @@ public class Meter {
 
 		// set needle pivot point
 		pivotPointX = meterWidth / 2 + meterX;
-		pivotPointY = meterY + meterFrameThickness + (int) (mWidth * PIVOTPOINTRATIO);
+		pivotPointY = meterY + frameThickness + (int) (mWidth * PIVOTPOINTRATIO);
 		meterChanged = true;
 	}
 
@@ -734,26 +734,26 @@ public class Meter {
 		return fullCircle;
 	}
 
-	public void setMeterFrameThickness(int frameThickness) {
-		meterFrameThickness = scale(frameThickness);
+	public void setFrameThickness(int frameThickness) {
+		this.frameThickness = scale(frameThickness);
 		meterChanged = true;
 
 		// Since meterHeight has already been calculated,
 		// it needs to be adjusted to account for the new meterFrameThickness
 		if (fullCircle == true) {
 			meterHeight = (int) (meterWidth * HEIGHTTOWIDTHRATIOFULLCIRCLE) + 
-					meterFrameThickness * 2;
+					frameThickness * 2;
 		} else {
 			meterHeight = (int) (meterWidth * HEIGHTTOWIDTHRATIOHALFCIRCLE) + 
-					meterFrameThickness * 2;
+					frameThickness * 2;
 		}
 		// Reset needle pivot point
 		pivotPointX = meterWidth / 2 + meterX;
-		pivotPointY = meterY + meterFrameThickness + (int) (meterWidth * PIVOTPOINTRATIO);		
+		pivotPointY = meterY + frameThickness + (int) (meterWidth * PIVOTPOINTRATIO);		
 	}
 
-	public int getMeterFrameThickness() {
-		return meterFrameThickness;
+	public int getFrameThickness() {
+		return frameThickness;
 	}
 	
 	/**
@@ -762,22 +762,22 @@ public class Meter {
 	 * PConstants.ROUND (2), or
 	 * PConstants.BEVEL (32).
 	 */
-	public void setMeterFrameStyle(int style) {
-		meterFrameStyle = style;
+	public void setFrameStyle(int style) {
+		frameStyle = style;
 		meterChanged = true;
 	}
 	
-	public int getMeterFrameStyle() {
-		return meterFrameStyle;
+	public int getFrameStyle() {
+		return frameStyle;
 	}
 
-	public void setMeterFrameColor(int frameColor) {
-		meterFrameColor = frameColor;
+	public void setFrameColor(int frameColor) {
+		this.frameColor = frameColor;
 		meterChanged = true;
 	}
 
-	public int getMeterFrameColor() {
-		return meterFrameColor;
+	public int getFrameColor() {
+		return frameColor;
 	}
 
 	/*
@@ -795,51 +795,51 @@ public class Meter {
 
 		mFrame = p.createGraphics(p.width, p.height);
 		mFrame.beginDraw();
-		mFrame.stroke(meterFrameColor);
-		mFrame.strokeWeight(meterFrameThickness);
-		mFrame.strokeJoin(meterFrameStyle);
-		mFrame.rect(meterX + meterFrameThickness / 2, // Left side
-				meterY + meterFrameThickness / 2, // Top
-				meterWidth - meterFrameThickness, // Right side
-				meterHeight - meterFrameThickness); // Bottom
+		mFrame.stroke(frameColor);
+		mFrame.strokeWeight(frameThickness);
+		mFrame.strokeJoin(frameStyle);
+		mFrame.rect(meterX + frameThickness / 2, // Left side
+				meterY + frameThickness / 2, // Top
+				meterWidth - frameThickness, // Right side
+				meterHeight - frameThickness); // Bottom
 		mFrame.endDraw();
 	}
 
-	public void setMeterTitleFontSize(int fontSize) {
-		meterTitleFontSize = scale(fontSize);
+	public void setTitleFontSize(int fontSize) {
+		titleFontSize = scale(fontSize);
 		meterChanged = true;
 	}
 
-	public int getMeterTitleFontSize() {
-		return meterTitleFontSize;
+	public int getTitleFontSize() {
+		return titleFontSize;
 	}
 
-	public void setMeterTitleFontName(String fontName) {
-		meterTitleFontName = fontName;
-		meterTitleFont = p.createFont(meterTitleFontName, meterTitleFontSize);
+	public void setTitleFontName(String fontName) {
+		titleFontName = fontName;
+		titleFont = p.createFont(titleFontName, titleFontSize);
 		meterChanged = true;
 	}
 
-	public String getMeterTitleFontName() {
-		return meterTitleFontName;
+	public String getTitleFontName() {
+		return titleFontName;
 	}
 
-	public void setMeterTitleFontColor(int titleColor) {
-		meterTitleFontColor = titleColor;
+	public void setTitleFontColor(int titleColor) {
+		titleFontColor = titleColor;
 		meterChanged = true;
 	}
 
-	public int getMeterTitleFontColor() {
-		return meterTitleFontColor;
+	public int getTitleFontColor() {
+		return titleFontColor;
 	}
 
-	public void setMeterTitle(String title) {
-		meterTitle = title;
+	public void setTitle(String title) {
+		this.title = title;
 		meterChanged = true;
 	}
 	
-	public String getMeterTitle() {
-		return meterTitle;
+	public String getTitle() {
+		return title;
 	}
 
 	/**
@@ -848,13 +848,13 @@ public class Meter {
 	 * 
 	 * @param YOffset
 	 */
-	public void setMeterTitleYOffset(int YOffset) {
-		meterTitleYOffset = scale(YOffset);
+	public void setTitleYOffset(int YOffset) {
+		titleYOffset = scale(YOffset);
 		meterChanged = true;
 	}
 
-	public int getMeterTitleYOffset() {
-		return meterTitleYOffset;
+	public int getTitleYOffset() {
+		return titleYOffset;
 	}
 
 	// Position the title just below the top of the meter frame
@@ -862,51 +862,51 @@ public class Meter {
 	private void drawMeterTitle() {
 		mTitle = p.createGraphics(p.width, p.height);
 		mTitle.beginDraw();
-		mTitle.textFont(meterTitleFont);
+		mTitle.textFont(titleFont);
 		mTitle.textAlign(PConstants.CENTER);
-		mTitle.fill(meterTitleFontColor);
-		mTitle.textSize(meterTitleFontSize);
-		mTitle.text(meterTitle, pivotPointX, meterY + p.textAscent() + 
-				meterFrameThickness + meterTitleYOffset);
+		mTitle.fill(titleFontColor);
+		mTitle.textSize(titleFontSize);
+		mTitle.text(title, pivotPointX, meterY + p.textAscent() + 
+				frameThickness + titleYOffset);
 		mTitle.endDraw();
 	}
 
 	/**
 	 * Set the diameter of the meter pivot point
 	 * 
-	 * @param pSize
+	 * @param pivotSize
 	 */
-	public void setMeterPivotPointSize(int pSize) {
-		meterPivotPointSize = scale(pSize);
+	public void setPivotPointSize(int pivotSize) {
+		pivotPointSize = scale(pivotSize);
 		meterChanged = true;
 	}
 
-	public int getMeterPivotPointSize() {
-		return meterPivotPointSize;
+	public int getPivotPointSize() {
+		return pivotPointSize;
 	}
 
-	public void setMeterPivotPointColor(int pColor) {
-		meterPivotPointColor = pColor;
+	public void setPivotPointColor(int pivotColor) {
+		pivotPointColor = pivotColor;
 		meterChanged = true;
 	}
 
-	public int getMeterPivotPointColor() {
-		return meterPivotPointColor;
+	public int getPivotPointColor() {
+		return pivotPointColor;
 	}
 
-	public int getMeterPivotPointX() {
+	public int getPivotPointX() {
 		return pivotPointX;
 	}
 
-	public int getMeterPivotPointY() {
+	public int getPivotPointY() {
 		return pivotPointY;
 	}
 
 	private void drawMeterPivotPoint() {
 		mPivot = p.createGraphics(p.width, p.height);
 		mPivot.beginDraw();
-		mPivot.fill(meterPivotPointColor);
-		mPivot.ellipse(pivotPointX, pivotPointY, meterPivotPointSize, meterPivotPointSize);
+		mPivot.fill(pivotPointColor);
+		mPivot.ellipse(pivotPointX, pivotPointY, pivotPointSize, pivotPointSize);
 		mPivot.endDraw();
 	}
 
@@ -1194,32 +1194,32 @@ public class Meter {
 		mArc.endDraw();
 	}
 
-	public void setMeterScaleFontSize(int sSize) {
-		meterScaleFontSize = scale(sSize);
+	public void setScaleFontSize(int scaleSize) {
+		scaleFontSize = scale(scaleSize);
 		meterChanged = true;
 	}
 
-	public int getMeterScaleFontSize() {
-		return meterScaleFontSize;
+	public int getScaleFontSize() {
+		return scaleFontSize;
 	}
 
-	public void setMeterScaleFontName(String sFont) {
-		meterScaleFontName = sFont;
-		meterScaleFont = p.createFont(meterScaleFontName, meterScaleFontSize);
+	public void setScaleFontName(String sFont) {
+		scaleFontName = sFont;
+		scaleFont = p.createFont(scaleFontName, scaleFontSize);
 		meterChanged = true;
 	}
 
-	public String getMeterScaleFontName() {
-		return meterScaleFontName;
+	public String getScaleFontName() {
+		return scaleFontName;
 	}
 
-	public void setMeterScaleFontColor(int sColor) {
-		meterScaleFontColor = sColor;
+	public void setScaleFontColor(int sColor) {
+		scaleFontColor = sColor;
 		meterChanged = true;
 	}
 
-	public int getMeterScaleFontColor() {
-		return meterScaleFontColor;
+	public int getScaleFontColor() {
+		return scaleFontColor;
 	}
 
 	/**
@@ -1249,13 +1249,13 @@ public class Meter {
 	 * 
 	 * @param scaleOffset
 	 */
-	public void setMeterScaleOffsetFromPivotPoint(int scaleOffset) {
-		meterScaleOffsetFromPivotPoint = scale(scaleOffset);
+	public void setScaleOffsetFromPivotPoint(int scaleOffset) {
+		scaleOffsetFromPivotPoint = scale(scaleOffset);
 		meterChanged = true;
 	}
 
-	public int getMeterScaleOffsetFromPivotPoint() {
-		return meterScaleOffsetFromPivotPoint;
+	public int getScaleOffsetFromPivotPoint() {
+		return scaleOffsetFromPivotPoint;
 	}
 
 	/**
@@ -1288,9 +1288,9 @@ public class Meter {
 				/ (labelCount - 1);
 		mLabels = p.createGraphics(p.width, p.height);
 		mLabels.beginDraw();
-		mLabels.textFont(meterScaleFont);
-		mLabels.textSize(meterScaleFontSize);
-		mLabels.fill(meterScaleFontColor);
+		mLabels.textFont(scaleFont);
+		mLabels.textSize(scaleFontSize);
+		mLabels.fill(scaleFontColor);
 		mLabels.textAlign(PConstants.CENTER);
 		for (int i = 0; i < labelCount; i++) {
 	//		if (displayLastScaleLabel == false && i == longTicMarkCount - 1) {
@@ -1298,9 +1298,9 @@ public class Meter {
 				continue;
 			}
 			labelX = pivotPointX + (PApplet.cos((float) currentTicRadians) * 
-					meterScaleOffsetFromPivotPoint);
+					scaleOffsetFromPivotPoint);
 			labelY = pivotPointY + PApplet.sin((float) currentTicRadians) * 
-					meterScaleOffsetFromPivotPoint +
+					scaleOffsetFromPivotPoint +
 					(p.textAscent() + p.textDescent()) / 2;
 			mLabels.text(scaleLabels[i], labelX, labelY);
 			currentTicRadians += ticSeparation;
@@ -1442,9 +1442,9 @@ public class Meter {
 		newMeterPosition = PApplet.map(newSensorValue, minScaleValue, maxScaleValue, 
 				PApplet.radians((float) arcMinDegrees), 
 				PApplet.radians((float) arcMaxDegrees));
-		if (newSensorValue > maximumMeterValue) {
-			setMaximumMeterValue(newSensorValue);
-			setMaximumMeterNeedlePosition(newMeterPosition);
+		if (newSensorValue > maximumValue) {
+			setMaximumValue(newSensorValue);
+			setMaximumNeedlePosition(newMeterPosition);
 		}
 	}
 
@@ -1535,9 +1535,9 @@ public class Meter {
 		mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
 		
 		// Draw maximum meter value needle if enabled
-		if (displayMaximumMeterValue == true) {
-			needleX = pivotPointX + (PApplet.cos(maximumMeterNeedlePosition) * maximumNeedleLength);
-			needleY = pivotPointY + PApplet.sin(maximumMeterNeedlePosition) * maximumNeedleLength;
+		if (displayMaximumValue == true) {
+			needleX = pivotPointX + (PApplet.cos(maximumNeedlePosition) * maximumNeedleLength);
+			needleY = pivotPointY + PApplet.sin(maximumNeedlePosition) * maximumNeedleLength;
 			mNeedle.stroke(maximumNeedleColor);
 			mNeedle.strokeWeight(maximumNeedleThickness);
 			mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
@@ -1553,12 +1553,12 @@ public class Meter {
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
 		
-		if (displayMaximumMeterValue == true) {
+		if (displayMaximumValue == true) {
 			mNeedle.textFont(informationAreaFont);
 			mNeedle.fill(maximumNeedleColor);
 			mNeedle.textAlign(PConstants.CENTER);
 			mNeedle.textSize(informationAreaFontSize);
-			informationText = Double.toString(Math.round(maximumMeterValue * 100.0) / 100.0);
+			informationText = Double.toString(Math.round(maximumValue * 100.0) / 100.0);
 			mNeedle.text(informationText, meterX + (meterWidth / 2), 
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
@@ -1570,8 +1570,8 @@ public class Meter {
 				mNeedle.fill(lowSensorWarningFontColor);
 				mNeedle.textSize(sensorWarningFontSize);
 				mNeedle.textAlign(PConstants.LEFT);
-				mNeedle.text("  " + sensorWarningLowText, meterX + meterFrameThickness,
-						meterY + p.textAscent() + meterFrameThickness + 
+				mNeedle.text("  " + sensorWarningLowText, meterX + frameThickness,
+						meterY + p.textAscent() + frameThickness + 
 						sensorWarningTextYOffset);
 			}
 		}
@@ -1581,8 +1581,8 @@ public class Meter {
 				mNeedle.fill(highSensorWarningFontColor);
 				mNeedle.textSize(sensorWarningFontSize);
 				mNeedle.textAlign(PConstants.RIGHT);
-				mNeedle.text(sensorWarningHighText + "  ", meterX + meterWidth - meterFrameThickness,
-						meterY + p.textAscent() + meterFrameThickness + 
+				mNeedle.text(sensorWarningHighText + "  ", meterX + meterWidth - frameThickness,
+						meterY + p.textAscent() + frameThickness + 
 						sensorWarningTextYOffset);
 			}
 		}

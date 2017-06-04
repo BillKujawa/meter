@@ -39,7 +39,7 @@ void setup() {
   m.setArcMaxDegrees(360.0); // ( end)
   m.setMinScaleValue(0);
   m.setMaxScaleValue(90);
-  m.setMeterTitle("Last Scale Label");
+  m.setTitle("Last Scale Label");
 
   // Meter Scale
   String[] scaleLabels = {"0", "10", "20", "30", "40", "50", "60", "70", "80", "90"};

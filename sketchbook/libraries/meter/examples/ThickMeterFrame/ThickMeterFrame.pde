@@ -21,11 +21,11 @@ void setup() {
 
   fill(120, 50, 0);
   m = new Meter(this, 10, 25);
-  m.setMeterFrameThickness(40);
-  m.setMeterFrameStyle(PConstants.ROUND);
+  m.setFrameThickness(40);
+  m.setFrameStyle(PConstants.ROUND);
   // Reduce the offsets
   m.setArcPositionOffset(140);
-  m.setMeterScaleOffsetFromPivotPoint(160);
+  m.setScaleOffsetFromPivotPoint(160);
   m.setTicMarkOffsetFromPivotPoint(106);
   // Adjust font color of meter value
   m.setDisplayDigitalMeterValue(true);
@@ -51,7 +51,7 @@ void setup() {
   // Display the difference in meter heights because of frame thickness.
   System.out.println("Meter1 Height: " + m.getMeterHeight());
   System.out.println("Meter2 Height: " + m2.getMeterHeight());
-  System.out.println("Frame Style: " + m.getMeterFrameStyle());
+  System.out.println("Frame Style: " + m.getFrameStyle());
 }
 
 public void draw() {
