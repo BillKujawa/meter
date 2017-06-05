@@ -1,6 +1,7 @@
 package meter;
 
 import java.util.Arrays;
+import java.util.Formatter;
 
 import processing.core.*;
 
@@ -68,6 +69,8 @@ public class Meter {
 	private String informationAreaFontName;
 	private PFont informationAreaFont;
 	private int informationAreaFontColor;
+	private String informationAreaText;
+
 	// Display the meter values if displayMaximumMeterValue is false.
 	private boolean displayDigitalMeterValue;
 
@@ -228,6 +231,7 @@ public class Meter {
 		setInformationAreaFontName("DejaVu Sans Mono bold");
 		setInformationAreaFontColor(p.color(0, 0, 255));
 		setDisplayDigitalMeterValue(false);
+		setInformationAreaText("Max Value: % .2f");
 
 		setTitleFontSize(24);
 		setTitleFontName("Liberation Sans Bold");
@@ -505,6 +509,21 @@ public class Meter {
 
 	public int getInformationAreaFontColor() {
 		return informationAreaFontColor;
+	}
+	
+	/**
+	 * Text used when displaying digitalMeterValue or maximumValue.
+	 * Note: see String.Format for java formatting examples.
+	 * 
+	 * @param infoAreaText
+	 */
+	public void setInformationAreaText(String infoAreaText) {
+		informationAreaText = infoAreaText;
+		meterChanged = true;
+	}
+	
+	public String getInformationAreaText() {
+		return informationAreaText;
 	}
 
 	/**
@@ -1527,7 +1546,7 @@ public class Meter {
 	private void drawMeterNeedle() {
 		float needleX = pivotPointX + (PApplet.cos(newMeterPosition) * needleLength);
 		float needleY = pivotPointY + PApplet.sin(newMeterPosition) * needleLength;
-		String informationText;
+		Formatter fmt = new Formatter();
 		mNeedle = p.createGraphics(p.width, p.height);
 		mNeedle.beginDraw();
 		mNeedle.stroke(needleColor);
@@ -1548,8 +1567,8 @@ public class Meter {
 			mNeedle.fill(informationAreaFontColor);
 			mNeedle.textAlign(PConstants.CENTER);
 			mNeedle.textSize(informationAreaFontSize);
-			informationText = Double.toString(Math.round(newSensorValue * 100.0) / 100.0);
-			mNeedle.text(informationText, meterX + (meterWidth / 2), 
+			fmt.format(informationAreaText, newSensorValue);
+			mNeedle.text(fmt.toString(), meterX + (meterWidth / 2), 
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
 		
@@ -1558,8 +1577,8 @@ public class Meter {
 			mNeedle.fill(maximumNeedleColor);
 			mNeedle.textAlign(PConstants.CENTER);
 			mNeedle.textSize(informationAreaFontSize);
-			informationText = Double.toString(Math.round(maximumValue * 100.0) / 100.0);
-			mNeedle.text(informationText, meterX + (meterWidth / 2), 
+			fmt.format(informationAreaText, maximumValue);
+			mNeedle.text(fmt.toString(), meterX + (meterWidth / 2), 
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
 

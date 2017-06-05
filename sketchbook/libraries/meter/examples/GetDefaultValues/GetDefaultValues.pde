@@ -31,6 +31,7 @@ void setup() {
   System.out.println("informationAreaFontName: " + m.getInformationAreaFontName());
   System.out.println("informationAreaFontColor: " + (int)red(m.getInformationAreaFontColor()) + ", " + 
     (int)green(m.getInformationAreaFontColor()) + ", " + (int)blue(m.getInformationAreaFontColor()));
+  System.out.println("informationAreaText: \"" + m.getInformationAreaText() + "\"");
   System.out.println("displayDigitalMeterValue: " + m.getDisplayDigitalMeterValue());
   System.out.println("currentMeterValue: " + m.getCurrentMeterValue());
   System.out.println("title: \"" + m.getTitle() + "\"");

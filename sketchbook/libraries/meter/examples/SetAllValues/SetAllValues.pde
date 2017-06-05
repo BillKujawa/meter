@@ -135,6 +135,7 @@ void draw() {
     m.setHighSensorWarningActive(false);
     m.setDisplayWarningMessagesToOutput(false);
     m.setDisplayDigitalMeterValue(false);
+    m.setInformationAreaText("Wow!: % .2f  Hot Stuff!");
   }
   if (i == 10) {
     m.setDisplayArc(true);
@@ -143,6 +144,7 @@ void draw() {
   if (i==12) {
     m.setLowSensorWarningActive(true);
     m.setDisplayDigitalMeterValue(true);
+    m.setInformationAreaText("Meter Value: % .2f");
   }
   if (i==14) {
     m.setHighSensorWarningActive(true);
