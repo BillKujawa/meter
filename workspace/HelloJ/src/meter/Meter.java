@@ -513,7 +513,9 @@ public class Meter {
 	
 	/**
 	 * Text used when displaying digitalMeterValue or maximumValue.
+	 * Default: " % .2f".
 	 * Note: see String.Format for java formatting examples.
+	 * Example: "Max Value: % .2f".
 	 * 
 	 * @param infoAreaText
 	 */
