@@ -80,7 +80,7 @@ public class Meter {
 	private PFont titleFont;
 	private int titleFontColor;
 	private String title;
-	// Adjust title distance from meter Y origin
+	// Adjust title distance from meter Y originNote: change the InformationAreaText after this is selected.
 	private int titleYOffset;
 
 	// Define the meter needle pivot point.
@@ -138,11 +138,25 @@ public class Meter {
 	// Keep track of the maximum meter value and
 	// display it if displayDigitalMeterValue is false.
 	private boolean displayMaximumValue;
+	private boolean displayMaximumNeedle;
 	private float maximumValue;
 	private float maximumNeedlePosition;
 	private int maximumNeedleLength;
 	private int maximumNeedleColor;
 	private int maximumNeedleThickness;
+	
+	// Keep track of the minimum meter value and
+	// display it if displayDigitalMeterValue is false.
+	// minimumValueIgnore used to ignore the initial value.
+	private boolean displayMinimumValue;
+	private boolean displayMinimumNeedle;
+	private float minimumValue;
+	private boolean minimumValueIgnore;
+	private float minimumNeedlePosition;
+	private int minimumNeedleLength;
+	private int minimumNeedleColor;
+	private int minimumNeedleThickness;
+	
 	
 	// Set optional warning values
 	private boolean lowSensorWarningActive;
@@ -231,7 +245,7 @@ public class Meter {
 		setInformationAreaFontName("DejaVu Sans Mono bold");
 		setInformationAreaFontColor(p.color(0, 0, 255));
 		setDisplayDigitalMeterValue(false);
-		setInformationAreaText("Max Value: % .2f");
+		setInformationAreaText(" % .2f");
 
 		setTitleFontSize(24);
 		setTitleFontName("Liberation Sans Bold");
@@ -281,11 +295,21 @@ public class Meter {
 		setNeedleThickness(1);
 		
 		setDisplayMaximumValue(false);
-		setMaximumValue(0.0f);
+		setDisplayMaximumNeedle(false);
+		setMaximumValue(getMinScaleValue());
 		setMaximumNeedlePosition(PApplet.radians((float) arcMinDegrees));
 		setMaximumNeedleLength(135);
 		setMaximumNeedleColor(p.color(230, 30, 230));
 		setMaximumNeedleThickness(1);
+		
+		setDisplayMinimumValue(false);
+		setDisplayMinimumNeedle(false);
+		setMinimumValue(getMaxScaleValue());
+		setMinimumValueIgnore(true);
+		setMinimumNeedlePosition(PApplet.radians((float) arcMaxDegrees));
+		setMinimumNeedleLength(135);
+		setMinimumNeedleColor(p.color(100, 170, 230));
+		setMinimumNeedleThickness(1);
 
 		setLowSensorWarningActive(false);
 		setHighSensorWarningActive(false);
@@ -354,19 +378,22 @@ public class Meter {
 
 	/**
 	 * Enable display of Meter Value at bottom of meter.
-	 * May not be enabled if displayMaximumMeterValue is enabled.
+	 * May not be enabled if displayMaximumValue or
+	 * displayMinimumValue are enabled.
 	 * 
 	 * @param displayMeterValue
 	 */
 	public void setDisplayDigitalMeterValue(boolean displayMeterValue) {
-		if (displayMeterValue == false || displayMaximumValue == false) {
-			displayDigitalMeterValue = displayMeterValue;
-			meterChanged = true;
-		}
-		else {
-			String errorMessage = "displayMeterValue may not be enabled while " +
-					"displayMaximumValue is enabled.";
-			displayErrorMessage(errorMessage);
+		if (displayMeterValue == true) {
+			if (displayMaximumValue == false && displayMinimumValue == false) {
+				displayDigitalMeterValue = displayMeterValue;
+				meterChanged = true;
+			}
+			else {
+				String errorMessage = "displayMeterValue may not be enabled while " +
+					"either displayMaximumValue or displayMinimumValue are enabled.";
+				displayErrorMessage(errorMessage);
+			}
 		}
 	}
 
@@ -374,21 +401,28 @@ public class Meter {
 		return displayDigitalMeterValue;
 	}
 	
+	
 	/**
 	 * Enable display of Maximum Meter Value obtained, at bottom of meter.
-	 * May not be enabled if displayDigitalMeterValue is enabled.
+	 * May not be enabled if displayDigitalMeterValue or 
+	 * displayMinimumValue are enabled.
+	 * Note: change the InformationAreaText after this is enabled,
+	 * to modify the default message.
 	 * 
 	 * @param displayMaximumValue
 	 */
 	public void setDisplayMaximumValue(boolean displayMaximumValue) {
-		if (displayMaximumValue == false || displayDigitalMeterValue == false) {
-			this.displayMaximumValue = displayMaximumValue;
-			meterChanged = true;
-		}
-		else {
-			String errorMessage = "displayMaximumValue may not be enabled while " +
-					"displayDigitalMeterValue is enabled.";
-			displayErrorMessage(errorMessage);
+		if (displayMaximumValue == true) {
+			if (displayMinimumValue == false &&	displayDigitalMeterValue == false) {
+				this.displayMaximumValue = displayMaximumValue;
+				setInformationAreaText("Max Value: % .2f");
+				meterChanged = true;
+			}
+			else {
+				String errorMessage = "displayMaximumValue may not be enabled while " +
+					"either displayDigitalMeterValue or displayMinimumValue are enabled.";
+				displayErrorMessage(errorMessage);
+			}
 		}
 	}
 
@@ -397,21 +431,182 @@ public class Meter {
 	}
 	
 	/**
+	 * Enable the display of the maximum Needle. This is independent of displaying
+	 * the maximum value.
+	 * 
+	 * @param displayNeedle
+	 */
+	public void setDisplayMaximumNeedle(boolean displayNeedle) {
+		displayMaximumNeedle = displayNeedle;
+		meterChanged = true;
+	}
+	
+	public boolean getDisplayMaximumNeedle() {
+		return displayMaximumNeedle;
+	}
+	
+	/**
 	 * Used to reset the maximum value or set a minimum value.
 	 * 
-	 * @param maxValue
+	 * @param maximumValue
 	 */
-	public void setMaximumValue(float maxValue) {
-		maximumValue = maxValue;
+	public void setMaximumValue(float maximumValue) {
+		this.maximumValue = maximumValue;
 	}
 	
 	public float getMaximumValue() {
 		return maximumValue;
 	}
 	
+	/**
+	 * The length of the maximum meter value needle.
+	 * 	
+	 * @param length
+	 */
+	public void setMaximumNeedleLength(int length) {
+		maximumNeedleLength = scale(length);
+	}
+
+	public int getMaximumNeedleLength() {
+		return maximumNeedleLength;
+	}
+
+	/**
+	 * The color of the maximum meter value needle.
+	 * 
+	 * @param needleColor
+	 */
+	public void setMaximumNeedleColor(int needleColor) {
+		maximumNeedleColor = needleColor;
+	}
+
+	public int getMaximumNeedleColor() {
+		return maximumNeedleColor;
+	}
+
+	/**
+	 * The width of the maximum meter value needle.
+	 * 
+	 * @param thickness
+	 */
+	public void setMaximumNeedleThickness(int thickness) {
+		maximumNeedleThickness = scale(thickness);
+	}
+
+	public int getMaximumNeedleThickness() {
+		return maximumNeedleThickness;
+	}
+	
 	private void setMaximumNeedlePosition(float position) {
 		maximumNeedlePosition = position;
 	}
+	
+	
+	
+	/**
+	 * Enable display of Minimum Meter Value obtained, at bottom of meter.
+	 * May not be enabled if displayDigitalMeterValue or 
+	 * displayMaximumValue are enabled.
+	 * Note: change the InformationAreaText after this is enabled,
+	 * to modify the default message.
+	 * 
+	 * @param displayMinimumValue
+	 */
+	public void setDisplayMinimumValue(boolean displayMinimumValue) {
+		if (displayMinimumValue == true) {
+			if (displayMaximumValue == false && displayDigitalMeterValue == false) {
+				this.displayMinimumValue = displayMinimumValue;
+				setInformationAreaText("Min Value % .2f");
+				meterChanged = true;
+			}
+			else {
+				String errorMessage = "displayMinimumValue may not be enabled while " +
+					"either displayDigitalMeterValue or displayMaximumValue are enabled.";
+				displayErrorMessage(errorMessage);
+			}
+		}
+	}
+
+	public boolean getDisplayMinimumValue() {
+		return displayMinimumValue;
+	}
+	
+	/**
+	 * Enable the display of the minimum Needle. This is independent of displaying
+	 * the minimum value.
+	 * 
+	 * @param displayMinumumNeedle
+	 */
+	public void setDisplayMinimumNeedle(boolean displayNeedle) {
+		displayMinimumNeedle = displayNeedle;
+		meterChanged = true;
+	}
+	
+	public boolean getDisplayMinimumNeedle() {
+		return displayMinimumNeedle;
+	}
+	
+	/**
+	 * The length of the minimum meter value needle.
+	 * 	
+	 * @param length
+	 */
+	public void setMinimumNeedleLength(int length) {
+		minimumNeedleLength = scale(length);
+	}
+
+	public int getMinimumNeedleLength() {
+		return minimumNeedleLength;
+	}
+
+	/**
+	 * The color of the minimum meter value needle.
+	 * 
+	 * @param needleColor
+	 */
+	public void setMinimumNeedleColor(int needleColor) {
+		minimumNeedleColor = needleColor;
+	}
+
+	public int getMinimumNeedleColor() {
+		return minimumNeedleColor;
+	}
+
+	/**
+	 * The width of the minimum meter value needle.
+	 * 
+	 * @param thickness
+	 */
+	public void setMinimumNeedleThickness(int thickness) {
+		minimumNeedleThickness = scale(thickness);
+	}
+
+	public int getMinimumNeedleThickness() {
+		return minimumNeedleThickness;
+	}
+	
+	/**
+	 * Used to reset the minimum value or set a maximum value.
+	 * 
+	 * @param minValue
+	 */
+	public void setMinimumValue(float minValue) {
+		minimumValue = minValue;
+	}
+	
+	public float getMinimumValue() {
+		return minimumValue;
+	}
+	
+	private void setMinimumNeedlePosition(float position) {
+		minimumNeedlePosition = position;
+	}
+	
+	// Used to ignore the initial low meter value.
+	private void setMinimumValueIgnore(boolean ignore) {
+		minimumValueIgnore = ignore;
+	}
+	
 	
 	/**
 	 * The sensor meter value 
@@ -512,7 +707,7 @@ public class Meter {
 	}
 	
 	/**
-	 * Text used when displaying digitalMeterValue or maximumValue.
+	 * Text used when displaying digitalMeterValue, maximum or minimum Values.
 	 * Default: " % .2f".
 	 * Note: see String.Format for java formatting examples.
 	 * Example: "Max Value: % .2f".
@@ -1467,6 +1662,15 @@ public class Meter {
 			setMaximumValue(newSensorValue);
 			setMaximumNeedlePosition(newMeterPosition);
 		}
+		if (newSensorValue < minimumValue) {
+			if (minimumValueIgnore == false) {
+				setMinimumValue(newSensorValue);
+				setMinimumNeedlePosition(newMeterPosition);
+			}
+			else {
+				setMinimumValueIgnore(false);
+			}
+		}
 	}
 
 
@@ -1500,45 +1704,6 @@ public class Meter {
 	}
 	
 
-	/**
-	 * The length of the maximum meter value needle.
-	 * 	
-	 * @param length
-	 */
-	public void setMaximumNeedleLength(int length) {
-		maximumNeedleLength = scale(length);
-	}
-
-	public int getMaximumNeedleLength() {
-		return maximumNeedleLength;
-	}
-
-	/**
-	 * The color of the maximum meter value needle.
-	 * 
-	 * @param needleColor
-	 */
-	public void setMaximumNeedleColor(int needleColor) {
-		maximumNeedleColor = needleColor;
-	}
-
-	public int getMaximumNeedleColor() {
-		return maximumNeedleColor;
-	}
-
-	/**
-	 * The width of the maximum meter value needle.
-	 * 
-	 * @param thickness
-	 */
-	public void setMaximumNeedleThickness(int thickness) {
-		maximumNeedleThickness = scale(thickness);
-	}
-
-	public int getMaximumNeedleThickness() {
-		return maximumNeedleThickness;
-	}
-
 	// Draw the needle at its new position.
 	// Draw the maximum needle at its current or new position.
 	// Display sensor values if enabled.
@@ -1556,14 +1721,21 @@ public class Meter {
 		mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
 		
 		// Draw maximum meter value needle if enabled
-		if (displayMaximumValue == true) {
+		if (displayMaximumNeedle == true) {
 			needleX = pivotPointX + (PApplet.cos(maximumNeedlePosition) * maximumNeedleLength);
 			needleY = pivotPointY + PApplet.sin(maximumNeedlePosition) * maximumNeedleLength;
 			mNeedle.stroke(maximumNeedleColor);
 			mNeedle.strokeWeight(maximumNeedleThickness);
 			mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
 		}
-
+		// Draw minimum meter value needle if enabled
+		if (displayMinimumNeedle == true) {
+			needleX = pivotPointX + (PApplet.cos(minimumNeedlePosition) * minimumNeedleLength);
+			needleY = pivotPointY + PApplet.sin(minimumNeedlePosition) * minimumNeedleLength;
+			mNeedle.stroke(minimumNeedleColor);
+			mNeedle.strokeWeight(minimumNeedleThickness);
+			mNeedle.line(pivotPointX, pivotPointY, needleX, needleY);
+		}
 		if (displayDigitalMeterValue == true) {
 			mNeedle.textFont(informationAreaFont);
 			mNeedle.fill(informationAreaFontColor);
@@ -1573,7 +1745,6 @@ public class Meter {
 			mNeedle.text(fmt.toString(), meterX + (meterWidth / 2), 
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
-		
 		if (displayMaximumValue == true) {
 			mNeedle.textFont(informationAreaFont);
 			mNeedle.fill(maximumNeedleColor);
@@ -1583,8 +1754,15 @@ public class Meter {
 			mNeedle.text(fmt.toString(), meterX + (meterWidth / 2), 
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
-
-
+		if (displayMinimumValue == true) {
+			mNeedle.textFont(informationAreaFont);
+			mNeedle.fill(minimumNeedleColor);
+			mNeedle.textAlign(PConstants.CENTER);
+			mNeedle.textSize(informationAreaFontSize);
+			fmt.format(informationAreaText, minimumValue);
+			mNeedle.text(fmt.toString(), meterX + (meterWidth / 2), 
+					meterY + meterHeight - informationAreaTextYOffset);
+		}
 		if (lowSensorWarningActive == true) {
 			if (lowSensorWarningValue >= newSensorValue) {
 				mNeedle.textFont(sensorWarningFont);
