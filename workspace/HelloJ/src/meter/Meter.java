@@ -1,6 +1,6 @@
 package meter;
 
-import java.util.Arrays;
+// import java.util.Arrays;
 import java.util.Formatter;
 
 import processing.core.*;
@@ -141,6 +141,7 @@ public class Meter {
 	private boolean displayMaximumNeedle;
 	private float maximumValue;
 	private float maximumNeedlePosition;
+	private int maximumIgnoreCount;
 	private int maximumNeedleLength;
 	private int maximumNeedleColor;
 	private int maximumNeedleThickness;
@@ -151,8 +152,8 @@ public class Meter {
 	private boolean displayMinimumValue;
 	private boolean displayMinimumNeedle;
 	private float minimumValue;
-	private boolean minimumValueIgnore;
 	private float minimumNeedlePosition;
+	private int minimumIgnoreCount;
 	private int minimumNeedleLength;
 	private int minimumNeedleColor;
 	private int minimumNeedleThickness;
@@ -297,6 +298,7 @@ public class Meter {
 		setDisplayMaximumValue(false);
 		setDisplayMaximumNeedle(false);
 		setMaximumValue(getMinScaleValue());
+		setMaximumIgnoreCount(0);
 		setMaximumNeedlePosition(PApplet.radians((float) arcMinDegrees));
 		setMaximumNeedleLength(135);
 		setMaximumNeedleColor(p.color(230, 30, 230));
@@ -305,7 +307,7 @@ public class Meter {
 		setDisplayMinimumValue(false);
 		setDisplayMinimumNeedle(false);
 		setMinimumValue(getMaxScaleValue());
-		setMinimumValueIgnore(true);
+		setMinimumIgnoreCount(0);
 		setMinimumNeedlePosition(PApplet.radians((float) arcMaxDegrees));
 		setMinimumNeedleLength(135);
 		setMinimumNeedleColor(p.color(100, 170, 230));
@@ -459,6 +461,21 @@ public class Meter {
 	}
 	
 	/**
+	 * Ignore the first 1, 10, or 100, etc. maximum values.
+	 * Useful if the input to the Meter has to stabilize.
+	 * Default is 0.
+	 * 
+	 * @param count
+	 */
+	public void setMaximumIgnoreCount(int count) {
+		maximumIgnoreCount = count;
+	}
+	
+	public int getMaximumIgnoreCount() {
+		return maximumIgnoreCount;
+	}
+	
+	/**
 	 * The length of the maximum meter value needle.
 	 * 	
 	 * @param length
@@ -535,7 +552,7 @@ public class Meter {
 	 * Enable the display of the minimum Needle. This is independent of displaying
 	 * the minimum value.
 	 * 
-	 * @param displayMinumumNeedle
+	 * @param displayNeedle
 	 */
 	public void setDisplayMinimumNeedle(boolean displayNeedle) {
 		displayMinimumNeedle = displayNeedle;
@@ -602,9 +619,19 @@ public class Meter {
 		minimumNeedlePosition = position;
 	}
 	
-	// Used to ignore the initial low meter value.
-	private void setMinimumValueIgnore(boolean ignore) {
-		minimumValueIgnore = ignore;
+	/**
+	 * Ignore the first 1, 10, or 100, etc. minimum values.
+	 * Useful if the input to the Meter has to stabilize.
+	 * Default is 0.
+	 * 
+	 * @param count
+	 */
+	public void setMinimumIgnoreCount(int count) {
+		minimumIgnoreCount = count;
+	}
+	
+	public int getMinimumIgnoreCount() {
+		return minimumIgnoreCount;
 	}
 	
 	
@@ -636,12 +663,6 @@ public class Meter {
 		return displayWarningMessagesToOutput;
 	}
 
-	/*
-	 * Calculate values based upon current scale factor.
-	 */
-	private float scale(float num) {
-		return num * scaleFactor;
-	}
 
 	private int scale(int num) {
 		return Math.round((float) num * scaleFactor);
@@ -1658,17 +1679,23 @@ public class Meter {
 		newMeterPosition = PApplet.map(newSensorValue, minScaleValue, maxScaleValue, 
 				PApplet.radians((float) arcMinDegrees), 
 				PApplet.radians((float) arcMaxDegrees));
+		
 		if (newSensorValue > maximumValue) {
-			setMaximumValue(newSensorValue);
-			setMaximumNeedlePosition(newMeterPosition);
+			if (maximumIgnoreCount <= 0) {
+				setMaximumValue(newSensorValue);
+				setMaximumNeedlePosition(newMeterPosition);
+			}
+			else {
+				maximumIgnoreCount--;
+			}
 		}
 		if (newSensorValue < minimumValue) {
-			if (minimumValueIgnore == false) {
+			if (minimumIgnoreCount <= 0) {
 				setMinimumValue(newSensorValue);
 				setMinimumNeedlePosition(newMeterPosition);
 			}
 			else {
-				setMinimumValueIgnore(false);
+				minimumIgnoreCount--;
 			}
 		}
 	}
@@ -1796,6 +1823,8 @@ public class Meter {
 			}
 		}
 		mNeedle.endDraw();
+		// Return resources
+		fmt.close();
 	}
 
 }
