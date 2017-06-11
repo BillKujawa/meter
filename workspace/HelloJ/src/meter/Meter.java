@@ -1,6 +1,5 @@
 package meter;
 
-// import java.util.Arrays;
 import java.util.Formatter;
 
 import processing.core.*;
@@ -145,6 +144,7 @@ public class Meter {
 	private int maximumNeedleLength;
 	private int maximumNeedleColor;
 	private int maximumNeedleThickness;
+	private String maximumValueText;
 	
 	// Keep track of the minimum meter value and
 	// display it if displayDigitalMeterValue is false.
@@ -157,6 +157,7 @@ public class Meter {
 	private int minimumNeedleLength;
 	private int minimumNeedleColor;
 	private int minimumNeedleThickness;
+	private String minimumValueText;
 	
 	
 	// Set optional warning values
@@ -303,6 +304,7 @@ public class Meter {
 		setMaximumNeedleLength(135);
 		setMaximumNeedleColor(p.color(230, 30, 230));
 		setMaximumNeedleThickness(1);
+		setMaximumValueText("Max Value: % .2f");
 		
 		setDisplayMinimumValue(false);
 		setDisplayMinimumNeedle(false);
@@ -312,6 +314,7 @@ public class Meter {
 		setMinimumNeedleLength(135);
 		setMinimumNeedleColor(p.color(100, 170, 230));
 		setMinimumNeedleThickness(1);
+		setMinimumValueText("Min Value: % .2f");
 
 		setLowSensorWarningActive(false);
 		setHighSensorWarningActive(false);
@@ -380,22 +383,16 @@ public class Meter {
 
 	/**
 	 * Enable display of Meter Value at bottom of meter.
-	 * May not be enabled if displayMaximumValue or
-	 * displayMinimumValue are enabled.
+	 * Disabled displayMaximumValue and displayMinimumValue
+	 * since there is only room for one to be displayed.
 	 * 
 	 * @param displayMeterValue
 	 */
 	public void setDisplayDigitalMeterValue(boolean displayMeterValue) {
+		displayDigitalMeterValue = displayMeterValue;
 		if (displayMeterValue == true) {
-			if (displayMaximumValue == false && displayMinimumValue == false) {
-				displayDigitalMeterValue = displayMeterValue;
-				meterChanged = true;
-			}
-			else {
-				String errorMessage = "displayMeterValue may not be enabled while " +
-					"either displayMaximumValue or displayMinimumValue are enabled.";
-				displayErrorMessage(errorMessage);
-			}
+			displayMaximumValue = false;
+			displayMinimumValue = false;
 		}
 	}
 
@@ -406,25 +403,16 @@ public class Meter {
 	
 	/**
 	 * Enable display of Maximum Meter Value obtained, at bottom of meter.
-	 * May not be enabled if displayDigitalMeterValue or 
-	 * displayMinimumValue are enabled.
-	 * Note: change the InformationAreaText after this is enabled,
-	 * to modify the default message.
+	 * Disabled displayMaximumValue and displayMinimumValue
+	 * since there is only room for one to be displayed.
 	 * 
 	 * @param displayMaximumValue
 	 */
 	public void setDisplayMaximumValue(boolean displayMaximumValue) {
+		this.displayMaximumValue = displayMaximumValue;
 		if (displayMaximumValue == true) {
-			if (displayMinimumValue == false &&	displayDigitalMeterValue == false) {
-				this.displayMaximumValue = displayMaximumValue;
-				setInformationAreaText("Max Value: % .2f");
-				meterChanged = true;
-			}
-			else {
-				String errorMessage = "displayMaximumValue may not be enabled while " +
-					"either displayDigitalMeterValue or displayMinimumValue are enabled.";
-				displayErrorMessage(errorMessage);
-			}
+			displayMinimumValue = false;
+			displayDigitalMeterValue = false;				
 		}
 	}
 
@@ -440,7 +428,6 @@ public class Meter {
 	 */
 	public void setDisplayMaximumNeedle(boolean displayNeedle) {
 		displayMaximumNeedle = displayNeedle;
-		meterChanged = true;
 	}
 	
 	public boolean getDisplayMaximumNeedle() {
@@ -518,29 +505,27 @@ public class Meter {
 		maximumNeedlePosition = position;
 	}
 	
+	public void setMaximumValueText(String maximumText) {
+		maximumValueText = maximumText;
+	}
 	
+	public String getMaximumValueText() {
+		return maximumValueText;
+	}
 	
+		
 	/**
 	 * Enable display of Minimum Meter Value obtained, at bottom of meter.
-	 * May not be enabled if displayDigitalMeterValue or 
-	 * displayMaximumValue are enabled.
-	 * Note: change the InformationAreaText after this is enabled,
-	 * to modify the default message.
+	 * Disabled displayMaximumValue and displayMinimumValue
+	 * since there is only room for one to be displayed.
 	 * 
 	 * @param displayMinimumValue
 	 */
 	public void setDisplayMinimumValue(boolean displayMinimumValue) {
+		this.displayMinimumValue = displayMinimumValue;
 		if (displayMinimumValue == true) {
-			if (displayMaximumValue == false && displayDigitalMeterValue == false) {
-				this.displayMinimumValue = displayMinimumValue;
-				setInformationAreaText("Min Value % .2f");
-				meterChanged = true;
-			}
-			else {
-				String errorMessage = "displayMinimumValue may not be enabled while " +
-					"either displayDigitalMeterValue or displayMaximumValue are enabled.";
-				displayErrorMessage(errorMessage);
-			}
+			displayMaximumValue = false;
+			displayDigitalMeterValue = false;
 		}
 	}
 
@@ -556,7 +541,6 @@ public class Meter {
 	 */
 	public void setDisplayMinimumNeedle(boolean displayNeedle) {
 		displayMinimumNeedle = displayNeedle;
-		meterChanged = true;
 	}
 	
 	public boolean getDisplayMinimumNeedle() {
@@ -617,6 +601,14 @@ public class Meter {
 	
 	private void setMinimumNeedlePosition(float position) {
 		minimumNeedlePosition = position;
+	}
+	
+	public void setMinimumValueText(String minimumText) {
+		minimumValueText = minimumText;
+	}
+	
+	public String getMinimumValueText() {
+		return minimumValueText;
 	}
 	
 	/**
@@ -1530,7 +1522,6 @@ public class Meter {
 		mLabels.fill(scaleFontColor);
 		mLabels.textAlign(PConstants.CENTER);
 		for (int i = 0; i < labelCount; i++) {
-	//		if (displayLastScaleLabel == false && i == longTicMarkCount - 1) {
 			if (displayLastScaleLabel == false && i == labelCount - 1) {
 				continue;
 			}
@@ -1735,6 +1726,7 @@ public class Meter {
 	// Draw the maximum needle at its current or new position.
 	// Display sensor values if enabled.
 	// Display maximum meter value if enabled.
+	// Display minimum meter value if enabled.
 	// Display low or high sensor warning messages if enabled.
 	// Display warning message if input signal is out-of-range.
 	private void drawMeterNeedle() {
@@ -1777,7 +1769,7 @@ public class Meter {
 			mNeedle.fill(maximumNeedleColor);
 			mNeedle.textAlign(PConstants.CENTER);
 			mNeedle.textSize(informationAreaFontSize);
-			fmt.format(informationAreaText, maximumValue);
+			fmt.format(maximumValueText, maximumValue);
 			mNeedle.text(fmt.toString(), meterX + (meterWidth / 2), 
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
@@ -1786,7 +1778,7 @@ public class Meter {
 			mNeedle.fill(minimumNeedleColor);
 			mNeedle.textAlign(PConstants.CENTER);
 			mNeedle.textSize(informationAreaFontSize);
-			fmt.format(informationAreaText, minimumValue);
+			fmt.format(minimumValueText, minimumValue);
 			mNeedle.text(fmt.toString(), meterX + (meterWidth / 2), 
 					meterY + meterHeight - informationAreaTextYOffset);
 		}
