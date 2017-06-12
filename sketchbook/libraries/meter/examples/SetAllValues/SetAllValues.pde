@@ -115,10 +115,19 @@ void setup() {
   m.setInputSignalOutOfRangeText("Woops\nMy Bad");
   m.setInputSignalOutOfRangeTextFromPivotPoint(-40);
   
-  // Display the maximum value obtained so far.
-  m.setMaximumNeedleColor(color(0, 0, 255));
+  // Maximum value options.
+  m.setMaximumNeedleColor(color(200, 0, 20));
   m.setMaximumNeedleLength(100);
   m.setMaximumNeedleThickness(3);
+  m.setMaximumIgnoreCount(2);
+  m.setMaximumValueText("Max Value: % .2f");
+  
+  // Minimum value options.
+  m.setMinimumNeedleColor(color(0, 255, 0));
+  m.setMinimumNeedleLength(90);
+  m.setMinimumNeedleThickness(5);
+  m.setMinimumIgnoreCount(5);
+  m.setMinimumValueText("Min Value: % .3f");
 }
 
 void draw() {
@@ -130,12 +139,16 @@ void draw() {
     m.setLowSensorWarningActive(false);
     m.setEnableInputSignalOutOfRange(false);
     m.setDisplayMaximumValue(true);
+    m.setMaximumValue(100);
   }
   if (i==8) {
     m.setHighSensorWarningActive(false);
     m.setDisplayWarningMessagesToOutput(false);
-    m.setDisplayDigitalMeterValue(false);
+    m.setDisplayMinimumValue(true);
     m.setInformationAreaText("Wow!: % .2f  Hot Stuff!");
+    m.setDisplayMaximumNeedle(false);
+    m.setDisplayMinimumNeedle(false);
+    m.setMinimumValue(200);
   }
   if (i == 10) {
     m.setDisplayArc(true);
@@ -145,11 +158,13 @@ void draw() {
     m.setLowSensorWarningActive(true);
     m.setDisplayDigitalMeterValue(true);
     m.setInformationAreaText("Meter Value: % .2f");
+    m.setDisplayMaximumNeedle(true);
   }
   if (i==14) {
     m.setHighSensorWarningActive(true);
     m.setEnableInputSignalOutOfRange(true);
     m.setMaximumValue(1.0);
+    m.setDisplayMinimumNeedle(true);
   }
   if (i == 16) {
     m.setDisplayLastScaleLabel(true);

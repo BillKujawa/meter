@@ -1,0 +1,70 @@
+Meter - Display values in an analog style meter.
+
+The default is the equivalent of a 0.0 to 5.0 volt meter.
+The input is 0 - 255, typical Arduino output for the 0 - 5 volt range.
+See: Default_No_Hardware or Arduino_5_Volt examples.
+No external hardware is required if viewing data from Processing code.
+
+Processing code to access Arduino data examples are included in the
+Arduino_5_Volt and Multi_Sensor_Input examples. That code is taken from
+examples by Tom Igoe.
+
+The other examples show how to modify the Meter.
+The meter is either a half circle or full circle when created:
+m = new Meter(this, x, y, true/false);
+x and y are the meter upper left corner.
+true/false creates a full/half circle meter.
+
+Make any changes immediately following the creation of a Meter class object
+in setup().
+Important!! if changing the size of the meter, make that the first change,
+setMeterWidth(int size). The height of the meter is calculated to accomodate
+the new width.
+
+When changing what the meter displays:
+The scale labels are what the user sees. They rotate clockwise, starting from zero degrees (3:00 Oclock) to 360 degrees (again at 3:00 Oclock). The default
+meter is 180 degrees (9:00 Oclock) to 360 degrees (3:00 Oclock).
+The long tic marks point to each scale label. On a full circle meter, such as the Full_Circle_Meter example, the first and last scale labels will overlap.
+This is necessary to correctly calculate the spacing. Use the 
+setDisplayLastScaleLabel(false) to not have them overlap on the meter.
+
+setMinScaleValue(0.0) and setMaxScaleValue(5.0) would be for scale labels
+from 0.0 to 5.0. These Methods are used instead of looking at the first and
+last scale labels to allow unrelated values. See the Full_Circle_Compass example. Note in that example the compass is counter clockwise.
+
+These values correspond to the interger input to the meter,
+updateMeter(int newSensorReading). setMinInputSignal(0) and 
+setMaxInputSignal(255) for the default meter.
+
+So it is input signal range which is translated to the scale value range
+that corresponds to the scale labels.
+
+After that, there are a few options that may be of interest, in no particular
+order.
+The digitalMeterValue can be displayed at the bottom of the meter.
+This area is called the informationArea. As with almost everything else, the font, color, size, text, etc. can be changed. See the other examples. 
+GetDefaultValues and SetAllValues will display the initial default values and demonstrate how to make the desired changes.
+
+The maximum and minimum values obtained so far, can also be displayed in the
+informationArea. They use the same font as defined by the informationArea but
+have individual options as well. Note that only one value can be displayed at
+a time, maximumValue, minimumValue, or digitalMeterValue. The maximum and
+minimum needles can be displayed at any time.
+
+High and low warnings can be set, with different colors on the meter arc. There are also warning messages that will be displayed.
+
+There is an enableInputSignalOutOfRange options with its own message if that
+condition is possible.
+
+The displayWarningMessagesToOutput can be used to disable any messages to
+the output display.
+
+MouseDirectionVelocityAcceleration example demonstrates what can be displayed
+without microprocessor input. Please excuse any physics mistakes in the example. It was ment to show uses of the Meter and not my very ancient high school physics class memory.
+
+So, have fun!
+
+Bill (Papa) Kujawa
+
+
+

@@ -58,8 +58,8 @@ void setup() {
   System.out.println("scaleFontName: " + m.getScaleFontName());
   System.out.println("scaleFontColor: " + (int)red(m.getScaleFontColor()) + ", " + 
     (int)green(m.getScaleFontColor()) + ", " + (int)blue(m.getScaleFontColor()));
-  System.out.println("pcaleFontSize: " + m.getScaleFontSize());
-  System.out.println("pcaleOffsetFromPivotPoint: " + m.getScaleOffsetFromPivotPoint());
+  System.out.println("scaleFontSize: " + m.getScaleFontSize());
+  System.out.println("scaleOffsetFromPivotPoint: " + m.getScaleOffsetFromPivotPoint());
   System.out.println("displayLastScaleLabel: " + m.getDisplayLastScaleLabel());
   // Display the String array as a string
   System.out.println("scaleLabels: \"" + join(m.getScaleLabels(), "\", \"") + "\"");
@@ -104,10 +104,20 @@ void setup() {
   System.out.println("inputSignalOutOfRangeText: \"" + m.getInputSignalOutOfRangeText().replace("\n", "\\n") + "\"");
   System.out.println("inputSignalOutOfRangeTextFromPivotPoint: " + m.getInputSignalOutOfRangeTextFromPivotPoint());
   System.out.println("displayMaximumValue: " + m.getDisplayMaximumValue());
+  System.out.println("displayMinimumValue: " + m.getDisplayMinimumValue());
   System.out.println("maximumNeedleColor: " + (int)red(m.getMaximumNeedleColor()) + ", " + 
     (int)green(m.getMaximumNeedleColor()) + ", " + (int)blue(m.getMaximumNeedleColor()));
+  System.out.println("mainmumNeedleColor: " + (int)red(m.getMinimumNeedleColor()) + ", " + 
+    (int)green(m.getMinimumNeedleColor()) + ", " + (int)blue(m.getMinimumNeedleColor()));
   System.out.println("maximumNeedleLength: " + m.getMaximumNeedleLength());
+  System.out.println("minimumNeedleLength: " + m.getMinimumNeedleLength());
   System.out.println("maximumNeedleThickness: " + m.getMaximumNeedleThickness());
+  System.out.println("minimumNeedleThickness: " + m.getMinimumNeedleThickness());
+  System.out.println("displayMaximumNeedle: " + m.getDisplayMaximumNeedle());
+  System.out.println("displayMinimumNeedle: " + m.getDisplayMinimumNeedle());
+ 
+  System.out.println("maximumIgnoreCount: " + m.getMaximumIgnoreCount());
+  System.out.println("minimumIgnoreCount: " + m.getMinimumIgnoreCount());
 }
 
 void draw() {
@@ -117,4 +127,5 @@ void draw() {
   m.updateMeter(sensorValue); // Update the sensor value to the meter.
   System.out.println("currentMeterValue: " + m.getCurrentMeterValue());
   System.out.println("maximumValue: " + m.getMaximumValue());
+  System.out.println("minimumValue: " + m.getMinimumValue());
 }
