@@ -1,6 +1,8 @@
 /* //<>//
  Default meter example. Ardunio and 3 volt sensor.
- See example Arduino code at end of file.
+ Start the microprocessor running, then start this sketch.
+ See example Arduino code at end of file:
+  "AnalogInOutSerialProcessing".
  
   created April 19, 2017
   by Bill (Papa) Kujawa.
@@ -18,7 +20,7 @@ Meter m;
 boolean deBug = false;
 
 // calculation variables
-int i;
+int i = 0;
 boolean dataReceived = false;
 int sensorNumber = 1; // Expected by microprocessor.
 int sensorValue = 0; // Default for starting.
@@ -40,8 +42,9 @@ void setup() {
   // Change scale labels to coinside with 0.0 to 3.0 volt sensor range.
   String[] scaleLabels = {"0.0", "1.0", "2.0", "3.0"};
   m.setScaleLabels(scaleLabels);
-  // Try setting the number of tics between major scale marks to 9 instead of 4.
-  // m.setShortTicsBetweenLongTics(9);
+  m.setDisplayDigitalMeterValue(true);
+  m.setMaxScaleValue(3.0f);
+  m.setShortTicsBetweenLongTics(9);
 }
 
 void draw() {
@@ -86,6 +89,8 @@ void serialEvent(Serial port1) {
 
 // ----------------------------------------------------------
 /*
+  AnalogInOutSerialToProcessing
+
   Arduino code to send sensor data to Processing.
   Analog input, analog output, serial output.
 

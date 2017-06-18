@@ -27,7 +27,7 @@ Meter m, av, aa;
 Mover mover;
 float heading;
 
-// Set main loop limit and array sizes.
+// Set array sizes.
 int iMax = 500;
 PVector[] pts = new PVector[iMax];
 int[] times = new int[iMax];
@@ -40,6 +40,11 @@ int i = 0;
 int maxVelocity = 0;
 int maxAcceleration = 0;
 float dotsPerCM = 255;
+int bx, by, bw, bh;
+boolean reset = false;
+
+PFont resetFont;
+
 
 void setup() {
   size(1000, 1000);
@@ -49,7 +54,7 @@ void setup() {
   // the calculations.
 
   m = new Meter(this, 10, 10, true);
-//  m.setMeterWidth(280);
+  //  m.setMeterWidth(280);
   int mx = m.getMeterX();
   int my = m.getMeterY();
   int mw = m.getMeterWidth();
@@ -85,7 +90,7 @@ void setup() {
   av.setScaleLabels(scaleLabelsAV);
   av.setMaxScaleValue(3.0);
   av.setDisplayMaximumValue(true);
-  av.setMaximumValue(0.0f);
+  av.setDisplayMaximumNeedle(true);
   int avx = av.getMeterX();
   int avy = av.getMeterY();
   int avh = av.getMeterHeight();
@@ -102,7 +107,10 @@ void setup() {
   aa.setMinScaleValue(-3.0);
   aa.setMaxScaleValue(3.0);
   aa.setDisplayMaximumValue(true);
-  
+  aa.setDisplayMaximumNeedle(true);
+  aa.setDisplayMinimumNeedle(true);
+
+
   // Note: This strange initial value will fool the meter
   // into thinking that the new maximumMeterValue is 0.0
   // when the first updateMeter is executed. The maximumMeterValue
@@ -113,10 +121,39 @@ void setup() {
   aa.setMaximumValue(-0.1f);
 
   mover = new Mover();
+
+  // Reset button
+  bx = 40;
+  by = height/2 + 40;
+  bw = 200;
+  bh = 50;
+  rect(bx, by, bw, bh);
+
+  // Uncomment the following two lines to see the available fonts 
+  //String[] fontList = PFont.list();
+  //printArray(fontList);
+
+  resetFont = createFont("Georgia", 32);
+  textFont(resetFont);
+  textAlign(CENTER, CENTER);
+  fill(0);
+  text("Reset", bx + bw / 2, by + bh / 2);
+  
+  // Without this, the Meter font changes, Bug?
+  resetFont = createFont("Georgia", 16);
+  textFont(resetFont);
 }
 
 void draw() {
   // background(0);
+
+  // Check if Reset selected.
+  if (mousePressed) {
+    if (mouseX > bx && mouseX < bx + bw &&
+      mouseY > by && mouseY < by + bh) {
+      reset = true;
+    }
+  }
 
   // Update the location
   mover.update();
@@ -161,9 +198,9 @@ class Mover {
         }
       }
       // If you wish to see the calculation values.
-//      System.out.println("i: " + i + "  tdiff[i]: " + tdiff[i] + "  dist[i]: " + dist[i] + 
-//        "  avgVelocity: " + avgVelocity[i] + "  max: " + maxVelocity + 
-//        "  avgAcceleleration: " + avgAcceleration + "  maxAcceleration: " + maxAcceleration);
+      //      System.out.println("i: " + i + "  tdiff[i]: " + tdiff[i] + "  dist[i]: " + dist[i] + 
+      //        "  avgVelocity: " + avgVelocity[i] + "  max: " + maxVelocity + 
+      //        "  avgAcceleleration: " + avgAcceleration + "  maxAcceleration: " + maxAcceleration);
 
       // Ignore any data when the mouse is not moving by not incrementing the counter.
       if (dist[i] > 0.0) {
@@ -186,15 +223,16 @@ class Mover {
   }
 
   void display() {
+    // Reset the maximum values for the Meters.
+    if (reset == true) {
+      av.setMaximumValue(-0.1f);
+      aa.setMaximumValue(-0.-1f);
+      aa.setMinimumValue(0.1f);
+      reset = false;
+    }
     // Compensate for Meter and Polar graphs in different directions.
     m.updateMeter(360 - (int)heading);
     av.updateMeter(velocity);
     aa.updateMeter(avgAcceleration);
-    // Reset the counter and reset the maximum values for the Meters.
-    if (i >= iMax) {
-      i = 0;
-      av.setMaximumValue(0);
-      aa.setMaximumValue(0);
-    }
   }
 }

@@ -253,7 +253,7 @@ public class Meter {
 		setTitleFontName("Liberation Sans Bold");
 		setTitleFontColor(p.color(0, 0, 0));
 		setTitle("Voltage");
-		setTitleYOffset(12);
+		setTitleYOffset(24);
 
 		setPivotPointSize(10);
 		setPivotPointColor(p.color(0, 0, 0));
@@ -1095,7 +1095,7 @@ public class Meter {
 		mTitle.textAlign(PConstants.CENTER);
 		mTitle.fill(titleFontColor);
 		mTitle.textSize(titleFontSize);
-		mTitle.text(title, pivotPointX, meterY + p.textAscent() + 
+		mTitle.text(title, pivotPointX, meterY +
 				frameThickness + titleYOffset);
 		mTitle.endDraw();
 	}
@@ -1528,8 +1528,13 @@ public class Meter {
 			labelX = pivotPointX + (PApplet.cos((float) currentTicRadians) * 
 					scaleOffsetFromPivotPoint);
 			labelY = pivotPointY + PApplet.sin((float) currentTicRadians) * 
-					scaleOffsetFromPivotPoint +
-					(p.textAscent() + p.textDescent()) / 2;
+					scaleOffsetFromPivotPoint;
+	// The following was removed because " textFont(A font used outside of Meter)
+	// causes the textAscent and text Descent to use the outside font and not
+	// the Meter font. ??? Why ???
+	// How to correctly position the scale labels around the arc to be a
+	// uniform distance away from the arc??????
+	//				(p.textAscent() + p.textDescent()) / 2;
 			mLabels.text(scaleLabels[i], labelX, labelY);
 			currentTicRadians += ticSeparation;
 		}

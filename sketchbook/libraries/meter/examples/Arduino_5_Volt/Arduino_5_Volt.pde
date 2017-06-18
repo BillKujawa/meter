@@ -1,6 +1,8 @@
 /* //<>// //<>//
  Default meter example. Ardunio and 5 volt sensor.
- See example Arduino code at end of file.
+ Start the microprocessor running, then start this sketch.
+ See example Arduino code at end of file:
+ "AnalogInOutSerialProcessing".
  
   created April 19, 2017
   by Bill (Papa) Kujawa.
@@ -18,7 +20,7 @@ Meter m;
 boolean deBug = false;
 
 // calculation variables
-int i;
+int i = 0;
 boolean dataReceived = false;
 int sensorNumber = 1; // Expected by microprocessor.
 int sensorValue = 0; // Default for starting.
@@ -37,6 +39,7 @@ void setup() {
   port1.bufferUntil('\n');
 
   m = new Meter(this, 125, 25); // Instantiate a meter class.
+  m.setDisplayDigitalMeterValue(true);
 }
 
 void draw() {
@@ -81,6 +84,8 @@ void serialEvent(Serial port1) {
 
 // ----------------------------------------------------------
 /*
+  AnalogOutSerialToProcessing
+  
   Arduino code to send sensor data to Processing.
   Analog input, analog output, serial output.
 
