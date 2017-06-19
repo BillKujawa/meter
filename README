@@ -5,7 +5,7 @@ The input is 0 - 255, typical Arduino output for the 0 - 5 volt range.
 See: Default_No_Hardware or Arduino_5_Volt examples.
 No external hardware is required if viewing data from Processing code.
 
-Processing code to access Arduino data examples are included in the
+Processing code to access Arduino data examples are included with the
 Arduino_5_Volt and Multi_Sensor_Input examples. That code is taken from
 examples by Tom Igoe.
 
@@ -39,6 +39,11 @@ setMaxInputSignal(255) for the default meter.
 So it is input signal range which is translated to the scale value range
 that corresponds to the scale labels.
 
+Use setUp(int minInputSignal, int maxInputSignal,
+		float minScaleValue, float maxScaleValue,
+		float arcMinDegrees, float arcMaxDegrees);
+as an easy alternative to the above six individual calls.
+
 After that, there are a few options that may be of interest, in no particular
 order.
 The digitalMeterValue can be displayed at the bottom of the meter.
@@ -60,7 +65,7 @@ The displayWarningMessagesToOutput can be used to disable any messages to
 the output display.
 
 MouseDirectionVelocityAcceleration example demonstrates what can be displayed
-without microprocessor input. Please excuse any physics mistakes in the example. It was ment to show uses of the Meter and not my very ancient high school physics class memory.
+without microprocessor input. Please excuse any physics mistakes in the example. It was ment to show uses of the Meter and not my very ancient high school physics class memory. (Thanks to Daniel Shiffman and his examples.)
 
 So, have fun!
 

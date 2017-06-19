@@ -59,12 +59,17 @@ void setup() {
   int my = m.getMeterY();
   int mw = m.getMeterWidth();
   m.setTitle("Direction");
-  m.setMinScaleValue(0.0f);
-  m.setMaxScaleValue(360.0f);
-  m.setMaxInputSignal(360);
+
+  // Example of using "setUp" instead of the individual calls.
+  m.setUp(0, 360, 0.0f, 360.0f, 0.0f, 360.0f);
+  // m.setMinInputSignal(0);
+  //  m.setMaxInputSignal(360);
+  //  m.setMinScaleValue(0.0f);
+  //  m.setMaxScaleValue(360.0f);
+  //  m.setArcMaxDegrees(360);
+  //  m.setArcMinDegrees(0);
+
   m.setDisplayWarningMessagesToOutput(false);
-  m.setArcMaxDegrees(360);
-  m.setArcMinDegrees(0);
   m.setDisplayLastScaleLabel(false);
   String[] scaleLabels = {"0", "330", "300", "270", "240", "210", 
     "180", "150", "120", "90", "60", "30", "360"};
@@ -138,7 +143,7 @@ void setup() {
   textAlign(CENTER, CENTER);
   fill(0);
   text("Reset", bx + bw / 2, by + bh / 2);
-  
+
   // Without this, the Meter font changes, Bug?
   resetFont = createFont("Georgia", 16);
   textFont(resetFont);

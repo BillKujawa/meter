@@ -380,6 +380,27 @@ public class Meter {
 		p.image(mTics, 0, 0);
 		p.image(mNeedle, 0, 0);
 	}
+	
+	/**
+	 * An alternate call to using the six separate calls.
+	 * 
+	 * @param minInputSignal
+	 * @param maxInputSignal
+	 * @param minScaleValue
+	 * @param maxScaleValue
+	 * @param arcMinDegrees
+	 * @param arcMaxDegrees
+	 */
+	public void setUp(int minInputSignal, int maxInputSignal,
+		float minScaleValue, float maxScaleValue,
+		float arcMinDegrees, float arcMaxDegrees) {
+		setMinInputSignal(minInputSignal);
+		setMaxInputSignal(maxInputSignal);
+		setMinScaleValue(minScaleValue);
+		setMaxScaleValue(maxScaleValue);
+		setArcMinDegrees(arcMinDegrees);
+		setArcMaxDegrees(arcMaxDegrees);
+	}
 
 	/**
 	 * Enable display of Meter Value at bottom of meter.
