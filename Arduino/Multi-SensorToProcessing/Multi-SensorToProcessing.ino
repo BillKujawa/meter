@@ -2,6 +2,7 @@
 
 /*
   Analog input, analog output, serial output
+  Used with Processing sketch: Multi_Sensor_Input.
 
   Reads an analog input pin, maps the result to a range from 0 to 255
   and uses the result to set the pulsewidth modulation (PWM) of an output pin.
@@ -26,15 +27,37 @@
 
   This example code is in the public domain.
 
+  Basic testing using the Serial Monitor:
+  Download the sketch.
+  In the serial moditor, enter 1. The voltage value will be output to the
+  serial monitor (0 - 255). The white LED should flash once. The green LED
+  will be ON. The voltage LED will indicate the value of the potentiometer
+  (dark to bright). Change the potentiometer setting, then enter 1 in the
+  serial monotor to change the voltage output and LED brightness.
+  Enter 2 in the serial monitor. The output will be the temperature in
+  Celcius, room temperature is around 25.
+  Enter 3 in the serial monitor. The output will be the relative humidity,
+  which was 43 percent today in Colorado.
+  Enter 4 in the serial monitor. The output will be the temperature in
+  Farenheight, about 75 for the room temperature.
+  If the red LED is ON, there is an input error, a value other than 1 - 4.
+
+  If this sketch is connected to Processing, instesd of the Arduino IDE,
+  the values can be monitored via the Multi_Sensor_Input sketch using
+  the Meter library.
+
+
 */
 
 // These constants won't change.  They're used to give names
 // to the pins used:
 const int analogInPin = A0;  // Analog input pin that the potentiometer is attached to
 const int DHT11_PIN = 5;  // Temperature and humidity sensor
+// The following LEDs are connected to ground through a 220 or larger ohm resistor
 const int whiteLed = 7;  // Sensor request received
 const int redLed = 10;  // Oops
 const int greenLed = 11;  // Sensor data sent to Processing
+const int voltageLed = 9; // Voltage level indicator
 
 dht DHT;
 
@@ -58,6 +81,7 @@ void setup() {
   pinMode(whiteLed, OUTPUT);  // valid sensor request received
   pinMode(redLed, OUTPUT);    // invalid sensor request
   pinMode(greenLed, OUTPUT);  // valid sensor request, sent sensor data
+  pinMode(voltageLed, OUTPUT); // Use the builtin LED to indicate voltage setting
 
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
@@ -112,7 +136,7 @@ void loop()
             // map it to the range of the analog out:
             outputValue = map(sensorValue, 0, 1023, 0, 255);
             // change the analog out value:
-            //     analogWrite(analogOutPin, outputValue);
+            analogWrite(voltageLed, outputValue);
 
             // Send back the requested results
             Serial.print(voltageSensor);
@@ -125,16 +149,20 @@ void loop()
         case temperatureSensorC:
         case temperatureSensorF:
           {
-            float Temp;
+            int Temp;
             // Serial.print("Temperature = ");
             int chk = DHT.read11(DHT11_PIN);
+            if (chk != 0) {
+              Serial.print("DTT11 error: ");
+              Serial.println(chk);
+              }
             if (sensorNumber == temperatureSensorC) {
               Serial.print(temperatureSensorC);
               Temp = DHT.temperature;
             }
             else {
-               Serial.print(temperatureSensorF);
-               Temp = (DHT.temperature * 9.0) / 5.0 + 32.0;  // Convert from C to F.
+              Serial.print(temperatureSensorF);
+              Temp = (DHT.temperature * 9.0) / 5.0 + 32.0;  // Convert from C to F.
             }
             Serial.print(",");
             Serial.println(Temp);
@@ -146,9 +174,13 @@ void loop()
           {
             // Serial.print("Humidity = ");
             int chk = DHT.read11(DHT11_PIN);
+            if (chk != 0) {
+              Serial.print("DTT11 error: ");
+              Serial.println(chk);
+            }
             Serial.print(humiditySensor);
             Serial.print(",");
-            Serial.println(DHT.humidity);
+            Serial.println((int)DHT.humidity);
             digitalWrite(greenLed, HIGH);
             digitalWrite(whiteLed, LOW);
             break;
