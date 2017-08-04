@@ -1,0 +1,15 @@
+The AnalogInOutSerialToProcessing sketch demonstrates how to
+access data (voltage level) from an Arduino microprocessor and 
+feed the data to the Meter Processing sketch. See the Processing 
+sketchbook example Arduino_5_Volt.
+
+The Multi-SensorToProcessing sketch demonstrates using
+multiple sensor inputs to a Meter Processing sketch:
+voltage, temperature, and humidity. This sketch uses the
+DHT Temperature & Humidity Sensor library for Arduino,
+URL: http://arduino.cc/playground/Main/DHTLib,
+developed by Rob Tillaart, Version: 0.1.14.
+It is here for convenience. Check for a newer version.
+
+
+

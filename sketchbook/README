@@ -1,0 +1,6 @@
+Processing library and examples for Meter.
+Some examples are used with an Arduino microprocessor
+to input and display sensor data.
+Most other examples are used to demonstrate how to
+modify a Meter to display various types of data
+and other Meter options.

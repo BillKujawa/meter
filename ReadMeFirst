@@ -1,0 +1,10 @@
+Directory structure:
+
+sketchbook: Meter library and examples for Processing.
+
+Arduino: example sketches that can be used to input sensor
+	data from an Arduino microprocessor to the Processing Meter.
+
+workspace: eclipse IDE Meter source files.
+
+meter.zip: Processing library for Meter.

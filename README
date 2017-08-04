@@ -58,7 +58,7 @@ minimum needles can be displayed at any time.
 
 High and low warnings can be set, with different colors on the meter arc. There are also warning messages that will be displayed.
 
-There is an enableInputSignalOutOfRange options with its own message if that
+There is an enableInputSignalOutOfRange option with its own message if that
 condition is possible.
 
 The displayWarningMessagesToOutput can be used to disable any messages to

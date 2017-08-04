@@ -35,6 +35,7 @@ void setup() {
   // println(Serial.list()); // Uncomment to find port name for your computer.
 
   port1 = new Serial(this, "/dev/ttyACM0", 9600);
+  // port1 = new Serial(this, "COM5", 9600);
   // Set condition to read bytes into a buffer until a newline is received.
   port1.bufferUntil('\n');
 

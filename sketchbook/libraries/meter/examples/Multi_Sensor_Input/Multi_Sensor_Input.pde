@@ -57,6 +57,7 @@ void setup() {
   // println(Serial.list()); // Uncomment to find port name for your computer.
   if (usingMicroprocessor == true) {
     port1 = new Serial(this, "/dev/ttyACM0", 9600);
+    // port1 = new Serial(this, "COM5", 9600);
     // Set condition to read bytes into a buffer until a newline is received.
     port1.bufferUntil('\n');
   }
@@ -87,6 +88,7 @@ void setup() {
   mF.setLowSensorWarningValue((float)65.0);
   mF.setHighSensorWarningActive(true);
   mF.setHighSensorWarningValue((float)85.0);
+  mF.setDisplayDigitalMeterValue(true);
   mF.updateMeter(70);
 
   // Humity Meter
@@ -96,6 +98,7 @@ void setup() {
   mH.setTitle("Humidity %");
   String[] scaleLabelsH = {"20", "30", "40", "50", "60", "70", "80", "90"};
   mH.setScaleLabels(scaleLabelsH);
+  mH.setDisplayDigitalMeterValue(true);
   mH.updateMeter(50);
 }
 

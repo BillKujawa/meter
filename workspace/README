@@ -1,0 +1,6 @@
+Meter source code. Developed using the eclipse IDE.
+UsingP.java is the test rig for calling meter.java.
+You can see most lines are commented out to make
+testing a set of methods easier. Once a change is 
+working meter.jar can be used with the Meter examples
+for further testing.
