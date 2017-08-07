@@ -67,6 +67,8 @@ the output display.
 MouseDirectionVelocityAcceleration example demonstrates what can be displayed
 without microprocessor input. Please excuse any physics mistakes in the example. It was ment to show uses of the Meter and not my very ancient high school physics class memory. (Thanks to Daniel Shiffman and his examples.)
 
+Source code available at: https://github.com/BillKujawa/meter.git
+
 So, have fun!
 
 Bill (Papa) Kujawa
