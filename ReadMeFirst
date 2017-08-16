@@ -7,4 +7,4 @@ Arduino: example sketches that can be used to input sensor
 
 workspace: eclipse IDE Meter source files.
 
-meter.zip: Processing library for Meter.
+download: Processing library for Meter and library.properties file.
