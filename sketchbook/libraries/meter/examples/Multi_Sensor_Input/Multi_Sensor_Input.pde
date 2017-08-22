@@ -3,6 +3,9 @@
  Voltage, temperature, and humidity.
  See example Arduino code at end of file.
  
+  The source code can be found at:
+  https://github.com/BillKujawa/meter/tree/master/Arduino
+ 
  Breathe on the temperature/humidity sensor to test.
  
  created April 19, 2017

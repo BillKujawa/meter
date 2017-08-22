@@ -4,6 +4,9 @@
  See example Arduino code at end of file:
  "AnalogInOutSerialProcessing".
  
+  The source code can be found at:
+  https://github.com/BillKujawa/meter/tree/master/Arduino
+ 
   created April 19, 2017
   by Bill (Papa) Kujawa.
 

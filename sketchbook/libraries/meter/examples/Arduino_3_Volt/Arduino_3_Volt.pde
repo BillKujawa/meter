@@ -3,6 +3,9 @@
  Start the microprocessor running, then start this sketch.
  See example Arduino code at end of file:
   "AnalogInOutSerialProcessing".
+  
+  The source code can be found at:
+  https://github.com/BillKujawa/meter/tree/master/Arduino
  
   created April 19, 2017
   by Bill (Papa) Kujawa.
@@ -94,6 +97,9 @@ void serialEvent(Serial port1) {
 
   Arduino code to send sensor data to Processing.
   Analog input, analog output, serial output.
+  
+  The source code can be found at:
+  https://github.com/BillKujawa/meter/tree/master/Arduino
 
   Reads an analog input pin, maps the result to a range from 0 to 255.
 
